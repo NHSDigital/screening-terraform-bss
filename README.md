@@ -1,6 +1,6 @@
 # BSS Infrastructure
 
-This repo exists to hold the infrastructure config for the BSS project.
+This repository exists to hold the infrastructure config for the BSS project.
 
 ## Table of Contents
 
@@ -19,9 +19,9 @@ This repo exists to hold the infrastructure config for the BSS project.
 
 To use this repository first you will need to clone it down to your local machine, you should use the `ssh` option for this if you wish to contribute back to the project.
 
-Once you have downloaded this repository you will need to run the python script to generate the s3 bucket which is required to hold the terraform state and lock files.
+Once you have downloaded this repository you will need to run the Python script to generate the s3 bucket which is required to hold the Terraform state and lock files.
 
-I would suggest first creating a virtual environment to isolate the python dependancies from your wider system, this can be achieved with the following command:
+I would suggest first creating a virtual environment to isolate the Python dependancies from your wider system, this can be achieved with the following command:
 
 ```bash
 python -m venv venv
@@ -39,11 +39,11 @@ now that you have assumed the virtual environment you can install the dependanci
 pip install -f requirements.txt
 ```
 
-that will take a few mins while it installs boto3 and its dependancies which is the most common python library to interact with AWS. Once it has finished you will need to set the credentials that you will use to authorise chances to your AWS account.
+that will take a few mins while it installs boto3 and its dependancies which is the most common Python library to interact with AWS. Once it has finished you will need to set the credentials that you will use to authorise chances to your AWS account.
 
-To do that go to your aws login screen in a browser. you should see a list of the accounts you have access to. There are two buttons under the account name, one should be your role that you click on to access the web gui, the other should say `Access Keys` when you click on that a popup will appear with credential commands. select the tab that matches your OS and then copy and paste the `export` or `SET` commands into the browser (depending if using windows or mac/linux)
+To do that go to your aws login screen in a browser. you should see a list of the accounts you have access to. There are two buttons under the account name, one should be your role that you click on to access the web GUI, the other should say `Access Keys` when you click on that a popup will appear with credential commands. select the tab that matches your OS and then copy and paste the `export` or `SET` commands into the browser (depending if using windows or mac/linux)
 
-with those credentials set you can now use the script to create the initial s3 setup required by terraform:
+with those credentials set you can now use the script to create the initial s3 setup required by Terraform:
 
 ```bash
 python scripts/aws-initial-setup.py
@@ -60,19 +60,19 @@ The following software packages, or their equivalents, are expected to be instal
 
 ### Configuration
 
-For initial terraform use you will need to cd to the stack you intend to use and run `terraform init` that will download the depenancies and setup everything you need to run terraform from your local machine.
+For initial Terraform use you will need to cd to the stack you intend to use and run `terraform init` that will download the depenancies and setup everything you need to run Terraform from your local machine.
 
 ## Usage
 
-To run terraform you will need to ensure you are targeting the correct aws account, any manual deployments should only go into the CICD environment, any higher environments will be managed by pipelines.
+To run Terraform you will need to ensure you are targeting the correct aws account, any manual deployments should only go into the CICD environment, any higher environments will be managed by pipelines.
 
-cd into the stack you want to configre, for example eks would be:
+cd into the stack you want to configure, for example eks would be:
 
 ```bash
 cd infrastructure/stacks/eks
 ```
 
-Then you would select the appropriate workspace, this will be your shortcode. If your shortcode was ABCD1 then you would select this with:
+Then you would select the appropriate workspace, this will be your Short Code. If your Short Code was ABCD1 then you would select this with:
 
 ```bash
 terraform workspace select ABCD1
@@ -99,7 +99,7 @@ There are `make` tasks for you to configure to run your tests. Run `make test` t
 
 ## Contributing
 
-If you find any problems with this repo or would like to request a new feature please raise an [issue](https://github.com/NHSDigital/screening-terraform-bss/issues)
+If you find any problems or would like to request a new feature please raise an [issue](https://github.com/NHSDigital/screening-terraform-bss/issues)
 
 ## Contacts
 
