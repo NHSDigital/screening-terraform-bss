@@ -1,6 +1,6 @@
 # BSS Infrastructure
 
-This repository exists to hold the infrastructure config for the BSS project.
+This repository exists to hold the infrastructure configuration for the BSS project.
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ I would suggest first creating a virtual environment to isolate the Python depen
 python -m venv venv
 ```
 
-That command will take a few seconds to create a virtual environment in a directory called `venv` you can then assume that virtual environment with the following command on mac or linux, the command may work on windows too, but if not a quick google search should show the correct command to assume the venv:
+That command will take a few seconds to create a virtual environment in a directory called `venv` you can then assume that virtual environment with the following command on mac or Linux, the command may work on windows too, but if not a quick google search should show the correct command to assume the virtual environment:
 
 ```bash
 source venv/bin/activate
@@ -41,7 +41,7 @@ pip install -f requirements.txt
 
 that will take a few mins while it installs boto3 and its dependancies which is the most common Python library to interact with AWS. Once it has finished you will need to set the credentials that you will use to authorise chances to your AWS account.
 
-To do that go to your aws login screen in a browser. you should see a list of the accounts you have access to. There are two buttons under the account name, one should be your role that you click on to access the web GUI, the other should say `Access Keys` when you click on that a popup will appear with credential commands. select the tab that matches your OS and then copy and paste the `export` or `SET` commands into the browser (depending if using windows or mac/linux)
+To do that go to your aws login screen in a browser. you should see a list of the accounts you have access to. There are two buttons under the account name, one should be your role that you click on to access the web GUI, the other should say `Access Keys` when you click on that a popup will appear with credential commands. select the tab that matches your OS and then copy and paste the `export` or `SET` commands into the browser (depending if using windows or mac/Linux)
 
 with those credentials set you can now use the script to create the initial s3 setup required by Terraform:
 
