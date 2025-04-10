@@ -1,125 +1,110 @@
-# Repository Template
+# BSS Infrastructure
 
-[![CI/CD Pull Request](https://github.com/nhs-england-tools/repository-template/actions/workflows/cicd-1-pull-request.yaml/badge.svg)](https://github.com/nhs-england-tools/repository-template/actions/workflows/cicd-1-pull-request.yaml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=repository-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=repository-template)
-
-Start with an overview or a brief description of what the project is about and what it does. For example -
-
-Welcome to our repository template designed to streamline your project setup! This robust template provides a reliable starting point for your new projects, covering an essential tech stack and encouraging best practices in documenting.
-
-This repository template aims to foster a user-friendly development environment by ensuring that every included file is concise and adequately self-documented. By adhering to this standard, we can promote increased clarity and maintainability throughout your project's lifecycle. Bundled within this template are resources that pave the way for seamless repository creation. Currently supported technologies are:
-
-- Terraform
-- Docker
-
-Make use of this repository template to expedite your project setup and enhance your productivity right from the get-go. Enjoy the advantage of having a well-structured, self-documented project that reduces overhead and increases focus on what truly matters - coding!
+This repo exists to hold the infrastructure config for the BSS project.
 
 ## Table of Contents
 
-- [Repository Template](#repository-template)
+- [BSS Infrastructure](#bss-infrastructure)
   - [Table of Contents](#table-of-contents)
   - [Setup](#setup)
     - [Prerequisites](#prerequisites)
     - [Configuration](#configuration)
   - [Usage](#usage)
     - [Testing](#testing)
-  - [Design](#design)
-    - [Diagrams](#diagrams)
-    - [Modularity](#modularity)
   - [Contributing](#contributing)
   - [Contacts](#contacts)
   - [Licence](#licence)
 
 ## Setup
 
-By including preferably a one-liner or if necessary a set of clear CLI instructions we improve user experience. This should be a frictionless installation process that works on various operating systems (macOS, Linux, Windows WSL) and handles all the dependencies.
+To use this repository first you will need to clone it down to your local machine, you should use the `ssh` option for this if you wish to contribute back to the project.
 
-Clone the repository
+Once you have downloaded this repository you will need to run the python script to generate the s3 bucket which is required to hold the terraform state and lock files.
 
-```shell
-git clone https://github.com/nhs-england-tools/repository-template.git
-cd nhs-england-tools/repository-template
+I would suggest first creating a virtual environment to isolate the python dependancies from your wider system, this can be achieved with the following command:
+
+```bash
+python -m venv venv
 ```
+
+That command will take a few seconds to create a virtual environment in a directory called `venv` you can then assume that virtual environment with the following command on mac or linux, the command may work on windows too, but if not a quick google search should show the correct command to assume the venv:
+
+```bash
+source venv/bin/activate
+```
+
+now that you have assumed the virtual environment you can install the dependancies with the following command:
+
+```bash
+pip install -f requirements.txt
+```
+
+that will take a few mins while it installs boto3 and its dependancies which is the most common python library to interact with AWS. Once it has finished you will need to set the credentials that you will use to authorise chances to your AWS account.
+
+To do that go to your aws login screen in a browser. you should see a list of the accounts you have access to. There are two buttons under the account name, one should be your role that you click on to access the web gui, the other should say `Access Keys` when you click on that a popup will appear with credential commands. select the tab that matches your OS and then copy and paste the `export` or `SET` commands into the browser (depending if using windows or mac/linux)
+
+with those credentials set you can now use the script to create the initial s3 setup required by terraform:
+
+```bash
+python scripts/aws-initial-setup.py
+```
+
+that will build you the s3 bucket you need and setup the initial file structure. If you get an error about authentication then your token has probably expired and you need to copy over the export commands from the aws console into your terminal and re-try, you may need to refresh the browser for a new key.
 
 ### Prerequisites
 
 The following software packages, or their equivalents, are expected to be installed and configured:
 
-- [Docker](https://www.docker.com/) container runtime or a compatible tool, e.g. [Podman](https://podman.io/),
-- [asdf](https://asdf-vm.com/) version manager,
 - [GNU make](https://www.gnu.org/software/make/) 3.82 or later,
-
-> [!NOTE]<br>
-> The version of GNU make available by default on macOS is earlier than 3.82. You will need to upgrade it or certain `make` tasks will fail. On macOS, you will need [Homebrew](https://brew.sh/) installed, then to install `make`, like so:
->
-> ```shell
-> brew install make
-> ```
->
-> You will then see instructions to fix your [`$PATH`](https://github.com/nhs-england-tools/dotfiles/blob/main/dot_path.tmpl) variable to make the newly installed version available. If you are using [dotfiles](https://github.com/nhs-england-tools/dotfiles), this is all done for you.
-
-- [GNU sed](https://www.gnu.org/software/sed/) and [GNU grep](https://www.gnu.org/software/grep/) are required for the scripted command-line output processing,
-- [GNU coreutils](https://www.gnu.org/software/coreutils/) and [GNU binutils](https://www.gnu.org/software/binutils/) may be required to build dependencies like Python, which may need to be compiled during installation,
-
-> [!NOTE]<br>
-> For macOS users, installation of the GNU toolchain has been scripted and automated as part of the `dotfiles` project. Please see this [script](https://github.com/nhs-england-tools/dotfiles/blob/main/assets/20-install-base-packages.macos.sh) for details.
-
-- [Python](https://www.python.org/) required to run Git hooks,
-- [`jq`](https://jqlang.github.io/jq/) a lightweight and flexible command-line JSON processor.
+- [Python](https://www.python.org/) for initial setup script,
 
 ### Configuration
 
-Installation and configuration of the toolchain dependencies
-
-```shell
-make config
-```
+For initial terraform use you will need to cd to the stack you intend to use and run `terraform init` that will download the depenancies and setup everything you need to run terraform from your local machine.
 
 ## Usage
 
-After a successful installation, provide an informative example of how this project can be used. Additional code snippets, screenshots and demos work well in this space. You may also link to the other documentation resources, e.g. the [User Guide](./docs/user-guide.md) to demonstrate more use cases and to show more features.
+To run terraform you will need to ensure you are targeting the correct aws account, any manual deployments should only go into the CICD environment, any higher environments will be managed by pipelines.
+
+cd into the stack you want to configre, for example eks would be:
+
+```bash
+cd infrastructure/stacks/eks
+```
+
+Then you would select the appropriate workspace, this will be your shortcode. If your shortcode was ABCD1 then you would select this with:
+
+```bash
+terraform workspace select ABCD1
+```
+
+> Note \
+> If you have not yet got a workspace you can create one with:
+
+```bash
+terraform workspace new ABCD1
+```
+
+then to run a plan you would run:
+
+```bash
+terraform plan -var-file='../../environments/01-DEV/main.tfvars'
+```
+
+that will show the changes that your local files will make to the environment.
 
 ### Testing
 
-There are `make` tasks for you to configure to run your tests.  Run `make test` to see how they work.  You should be able to use the same entry points for local development as in your CI pipeline.
-
-## Design
-
-### Diagrams
-
-The [C4 model](https://c4model.com/) is a simple and intuitive way to create software architecture diagrams that are clear, consistent, scalable and most importantly collaborative. This should result in documenting all the system interfaces, external dependencies and integration points.
-
-![Repository Template](./docs/diagrams/Repository_Template_GitHub_Generic.png)
-
-The source for diagrams should be in Git for change control and review purposes. Recommendations are [draw.io](https://app.diagrams.net/) (example above in [docs](.docs/diagrams/) folder) and [Mermaids](https://github.com/mermaid-js/mermaid). Here is an example Mermaids sequence diagram:
-
-```mermaid
-sequenceDiagram
-    User->>+Service: GET /users?params=...
-    Service->>Service: auth request
-    Service->>Database: get all users
-    Database-->>Service: list of users
-    Service->>Service: filter users
-    Service-->>-User: list[User]
-```
-
-### Modularity
-
-Most of the projects are built with customisability and extendability in mind. At a minimum, this can be achieved by implementing service level configuration options and settings. The intention of this section is to show how this can be used. If the system processes data, you could mention here for example how the input is prepared for testing - anonymised, synthetic or live data.
+There are `make` tasks for you to configure to run your tests. Run `make test` to see how they work. You should be able to use the same entry points for local development as in your CI pipeline.
 
 ## Contributing
 
-Describe or link templates on how to raise an issue, feature request or make a contribution to the codebase. Reference the other documentation files, like
-
-- Environment setup for contribution, i.e. `CONTRIBUTING.md`
-- Coding standards, branching, linting, practices for development and testing
-- Release process, versioning, changelog
-- Backlog, board, roadmap, ways of working
-- High-level requirements, guiding principles, decision records, etc.
+If you find any problems with this repo or would like to request a new feature please raise an [issue](https://github.com/NHSDigital/screening-terraform-bss/issues)
 
 ## Contacts
 
-Provide a way to contact the owners of this project. It can be a team, an individual or information on the means of getting in touch via active communication channels, e.g. opening a GitHub discussion, raising an issue, etc.
+Maintainers are:\
+[Andrew Cleveland](https://github.com/andrew-cleveland)
 
 ## Licence
 
