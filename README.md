@@ -97,6 +97,30 @@ that will show the changes that your local files will make to the environment.
 
 There are `make` tasks for you to configure to run your tests. Run `make test` to see how they work. You should be able to use the same entry points for local development as in your CI pipeline.
 
+### Security
+
+graph LR;
+    subgraph "Availability Zone A";
+        public-subnet-a["Public Subnet A"];
+        private-subnet-a["Private Subnet A"];
+    end;
+    subgraph "Availability Zone B";
+        public-subnet-b["Public Subnet B"];
+        private-subnet-b["Private Subnet B"];
+    end;
+    eks-cluster[EKS Cluster];
+    rds-instance[RDS Instance];
+    elasticache-cluster[ElastiCache Cluster];
+    public-subnet-a --> eks-cluster;
+    public-subnet-b --> eks-cluster;
+    private-subnet-a --> rds-instance;
+    private-subnet-b --> rds-instance;
+    private-subnet-a --> elasticache-cluster;
+    private-subnet-b --> elasticache-cluster;
+    eks-cluster --> rds-instance;
+    eks-cluster --> elasticache-cluster;
+
+
 ## Contributing
 
 If you find any problems or would like to request a new feature please raise an [issue](https://github.com/NHSDigital/screening-terraform-bss/issues)
