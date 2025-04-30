@@ -50,7 +50,7 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:your-org/your-repo:*"
+            "token.actions.githubusercontent.com:sub" = "repo:NHSDigital/screening-terraform-bss:*"
           }
         }
       }
