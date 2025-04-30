@@ -15,5 +15,5 @@ variable "environment" {
 
 variable "db_name" {
   description = "the name for the users database"
-  type = string
+  type        = string
 }

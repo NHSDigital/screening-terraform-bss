@@ -12,6 +12,6 @@ module "database" {
   name          = var.name
   environment   = var.environment
   aws_secret_id = "postgres-credentials"
-  db_name = var.db_name
+  db_name       = var.db_name
 }
 
