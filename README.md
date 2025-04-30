@@ -99,7 +99,7 @@ There are `make` tasks for you to configure to run your tests. Run `make test` t
 
 ### Security
 
-graph LR;
+graph TD;
     subgraph "Availability Zone A";
         public-subnet-a["Public Subnet A"];
         private-subnet-a["Private Subnet A"];
