@@ -12,3 +12,5 @@
 
 # Please, add your custom content below!
 scripts/venv
+.terraformrc
+

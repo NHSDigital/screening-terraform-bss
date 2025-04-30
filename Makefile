@@ -26,6 +26,13 @@ config:: # Configure development environment (main) @Configuration
 	# TODO: Use only 'make' targets that are specific to this project, e.g. you may not need to install Node.js
 	make _install-dependencies
 
+apply:
+	terraform apply -var-file='../../environments/01-DEV/main.tfvars'
+
+destroy:
+	terraform destroy -var-file='../../environments/01-DEV/main.tfvars'
+
+
 # ==============================================================================
 
 ${VERBOSE}.SILENT: \
@@ -34,3 +41,4 @@ ${VERBOSE}.SILENT: \
 	config \
 	dependencies \
 	deploy \
+
