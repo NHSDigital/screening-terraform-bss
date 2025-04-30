@@ -99,27 +99,13 @@ There are `make` tasks for you to configure to run your tests. Run `make test` t
 
 ### Security
 
-graph TD;
-    subgraph "Availability Zone A";
-        public-subnet-a["Public Subnet A"];
-        private-subnet-a["Private Subnet A"];
-    end;
-    subgraph "Availability Zone B";
-        public-subnet-b["Public Subnet B"];
-        private-subnet-b["Private Subnet B"];
-    end;
-    eks-cluster[EKS Cluster];
-    rds-instance[RDS Instance];
-    elasticache-cluster[ElastiCache Cluster];
-    public-subnet-a --> eks-cluster;
-    public-subnet-b --> eks-cluster;
-    private-subnet-a --> rds-instance;
-    private-subnet-b --> rds-instance;
-    private-subnet-a --> elasticache-cluster;
-    private-subnet-b --> elasticache-cluster;
-    eks-cluster --> rds-instance;
-    eks-cluster --> elasticache-cluster;
+in the dev environment the RDS instance is publically accessable and secured by ssl certs, this allows developers to connect to the database remotely.
 
+In higher environments the RDS instance is not publically accessable, this is to provide increased security.
+
+However we can impliment a break glass process incase of emergency which would be to deploy a pgadmin pod into the EKS cluster, along with the required IAM permissions and security groups to enable it to talk to the RDS.
+
+This way we can still connect directly in case of emergency while keeping the RDS instance issolated the majority of the time.
 
 ## Contributing
 
