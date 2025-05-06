@@ -99,11 +99,11 @@ There are `make` tasks for you to configure to run your tests. Run `make test` t
 
 ### Security
 
-in the dev environment the RDS instance is publically accessable and secured by ssl certs, this allows developers to connect to the database remotely.
+in the Dev environment the RDS instance is publicly accessable and secured by ssl certs, this allows developers to connect to the database remotely.
 
-In higher environments the RDS instance is not publically accessable, this is to provide increased security.
+In higher environments the RDS instance is not publicly accessable, this is to provide increased security.
 
-However we can impliment a break glass process incase of emergency which would be to deploy a pgadmin pod into the EKS cluster, along with the required IAM permissions and security groups to enable it to talk to the RDS.
+However we can implement a break glass process incase of emergency which would be to deploy a PGAdmin pod into the EKS cluster, along with the required IAM permissions and security groups to enable it to talk to the RDS.
 
 This way we can still connect directly in case of emergency while keeping the RDS instance issolated the majority of the time.
 
