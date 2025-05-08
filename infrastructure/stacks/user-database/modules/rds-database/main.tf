@@ -29,8 +29,8 @@ provider "postgresql" {
   host            = local.hostname
   port            = 5432
   database        = "postgres"
-  username        = local.postgresql_credentials.username
-  password        = local.postgresql_credentials.password
+  username        = local.postgres-credentials.username
+  password        = local.postgres-credentials.password
   sslmode         = "require"
   connect_timeout = 15
 }
