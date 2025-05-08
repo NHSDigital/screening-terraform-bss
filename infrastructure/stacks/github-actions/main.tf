@@ -146,7 +146,7 @@ resource "aws_iam_policy" "github_actions_secrets" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:postgres-credentials"
+        Resource = "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:*"
       }
     ]
   })

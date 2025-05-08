@@ -43,17 +43,9 @@ jobs:
 
       - name: Terraform Init
         working-directory: infrastructure/stacks/user-database
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.workspace }}
         run: terraform init
-
-      - name: Select or create workspace
-        working-directory: infrastructure/stacks/user-database
-        run: |
-          if terraform workspace select ${{ github.event.inputs.workspace }} 2>/dev/null; then
-            echo "Selected workspace ${{ github.event.inputs.workspace }}"
-          else
-            terraform workspace new ${{ github.event.inputs.workspace }}
-            echo "Created new workspace ${{ github.event.inputs.workspace }}"
-          fi
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/user-database
