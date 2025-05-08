@@ -57,8 +57,8 @@ jobs:
           TF_VAR_db_name: ${{ github.event.inputs.workspace }}
         run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/01-DEV/main.tfvars"
 
-      - name: Cleanup
-        if: always()
-        working-directory: infrastructure/stacks/user-database
-        run: terraform workspace select default
+      # - name: Cleanup
+      #   if: always()
+      #   working-directory: infrastructure/stacks/user-database
+      #   run: terraform workspace select default
 
