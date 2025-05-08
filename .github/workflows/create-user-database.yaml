@@ -19,16 +19,14 @@ on:
           - stma7
           # Add new workspaces here
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${ secrets.DEV_AWS_ACCOUNT_ID }:role/github-actions-role
-          aws-region: eu-west-2
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -37,28 +35,30 @@ jobs:
         with:
           terraform_version: '1.4.6'
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
+          aws-region: eu-west-2
+
       - name: Terraform Init
         working-directory: infrastructure/stacks/user-database
+        env:
+          TF_WORKSPACE: ${{ github.event.inputs.workspace }}
         run: terraform init
 
-      - name: Select or create workspace
+      - name: Check current workspace
         working-directory: infrastructure/stacks/user-database
-        run: |
-          if terraform workspace select ${{ github.event.inputs.workspace }} 2>/dev/null; then
-            echo "Selected workspace ${{ github.event.inputs.workspace }}"
-          else
-            terraform workspace new ${{ github.event.inputs.workspace }}
-            echo "Created new workspace ${{ github.event.inputs.workspace }}"
-          fi
+        run: terraform workspace select ${{ github.event.inputs.workspace }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/user-database
         env:
           TF_VAR_db_name: ${{ github.event.inputs.workspace }}
-        run: terraform ${{ github.event.inputs.action }} -auto-approve
+        run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/01-DEV/main.tfvars"
 
-      - name: Cleanup
-        if: always()
-        working-directory: infrastructure/stacks/user-database
-        run: terraform workspace select default
+      # - name: Cleanup
+      #   if: always()
+      #   working-directory: infrastructure/stacks/user-database
+      #   run: terraform workspace select default
 

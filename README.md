@@ -97,6 +97,16 @@ that will show the changes that your local files will make to the environment.
 
 There are `make` tasks for you to configure to run your tests. Run `make test` to see how they work. You should be able to use the same entry points for local development as in your CI pipeline.
 
+### Security
+
+in the development environment the RDS instance is publicly accessable and secured by ssl certs, this allows developers to connect to the database remotely.
+
+In higher environments the RDS instance is not publicly accessable, this is to provide increased security.
+
+However we can implement a break glass process incase of emergency which would be to deploy a `PGAdmin` pod into the EKS cluster, along with the required IAM permissions and security groups to enable it to talk to the RDS.
+
+This way we can still connect directly in case of emergency while keeping the RDS instance issolated the majority of the time.
+
 ## Contributing
 
 If you find any problems or would like to request a new feature please raise an [issue](https://github.com/NHSDigital/screening-terraform-bss/issues)

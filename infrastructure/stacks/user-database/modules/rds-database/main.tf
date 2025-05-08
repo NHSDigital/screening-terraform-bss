@@ -7,12 +7,12 @@ terraform {
   }
 }
 
-data "aws_secretsmanager_secret_version" "postgresql_credentials" {
+data "aws_secretsmanager_secret_version" "postgres-credentials" {
   secret_id = var.aws_secret_id
 }
 
 locals {
-  postgresql_credentials = jsondecode(data.aws_secretsmanager_secret_version.postgresql_credentials.secret_string)
+  postgres-credentials = jsondecode(data.aws_secretsmanager_secret_version.postgres-credentials.secret_string)
 }
 
 data "aws_db_instance" "rds" {
@@ -29,8 +29,8 @@ provider "postgresql" {
   host            = local.hostname
   port            = 5432
   database        = "postgres"
-  username        = local.postgresql_credentials.username
-  password        = local.postgresql_credentials.password
+  username        = local.postgres-credentials.username
+  password        = local.postgres-credentials.password
   sslmode         = "require"
   connect_timeout = 15
 }

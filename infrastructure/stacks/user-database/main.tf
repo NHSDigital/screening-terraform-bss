@@ -11,7 +11,7 @@ module "database" {
   source        = "./modules/rds-database"
   name          = var.name
   environment   = var.environment
-  aws_secret_id = "postgres-credentials"
+  aws_secret_id = var.aws_secret_id
   db_name       = var.db_name
 }
 

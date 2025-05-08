@@ -65,10 +65,9 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
-resource "aws_iam_policy" "github_actions" {
-  name        = "github-actions-policy"
+resource "aws_iam_policy" "github_actions_rds" {
+  name        = "github-actions-rds"
   description = "Policy for GitHub Actions"
-
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -76,7 +75,37 @@ resource "aws_iam_policy" "github_actions" {
         Effect = "Allow"
         Action = [
           "rds:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "github_actions_eks" {
+  name        = "github-actions-eks"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
           "eks:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "github_actions_elasticache" {
+  name        = "github-actions-elasticache"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
           "elasticache:*",
         ]
         Resource = "*"
@@ -85,8 +114,66 @@ resource "aws_iam_policy" "github_actions" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "github_actions" {
+resource "aws_iam_policy" "github_actions_s3" {
+  name        = "github-actions-s3"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "github_actions_secrets" {
+  name        = "github-actions-secrets"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_rds" {
   role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions.arn
+  policy_arn = aws_iam_policy.github_actions_rds.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_eks" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_eks.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_elasticache" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_elasticache.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_s3" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_s3.arn
+}
+
+resource "aws_iam_role_policy_attachment" "github_actions_secrets" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_secrets.arn
 }
 
