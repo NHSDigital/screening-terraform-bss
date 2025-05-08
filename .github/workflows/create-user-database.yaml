@@ -49,7 +49,7 @@ jobs:
 
       - name: Check current workspace
         working-directory: infrastructure/stacks/user-database
-        run: terraform workspace list
+        run: terraform workspace select ${{ github.event.inputs.workspace }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/user-database
