@@ -65,10 +65,9 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
-resource "aws_iam_policy" "github_actions" {
+resource "aws_iam_policy" "github_actions_rds" {
   name        = "github-actions-policy"
   description = "Policy for GitHub Actions"
-
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -76,14 +75,77 @@ resource "aws_iam_policy" "github_actions" {
         Effect = "Allow"
         Action = [
           "rds:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "github_actions_eks" {
+  name        = "github-actions-policy"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
           "eks:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_policy" "github_actions_elasticache" {
+  name        = "github-actions-policy"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
           "elasticache:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "github_actions_s3" {
+  name        = "github-actions-policy"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
           "s3:GetObject",
           "s3:PutObject",
           "s3:DeleteObject",
           "s3:ListBucket"
         ]
         Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "github_actions_secrets" {
+  name        = "github-actions-policy"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "postgres-credentials"
       }
     ]
   })
