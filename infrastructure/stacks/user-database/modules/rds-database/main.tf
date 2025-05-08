@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-data "aws_secretsmanager_secret_version" "postgresql_credentials" {
+data "aws_secretsmanager_secret_version" "postgres-credentials" {
   secret_id = var.aws_secret_id
 }
 
