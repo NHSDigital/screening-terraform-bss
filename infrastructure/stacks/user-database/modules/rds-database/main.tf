@@ -12,7 +12,7 @@ data "aws_secretsmanager_secret_version" "postgres-credentials" {
 }
 
 locals {
-  postgresql_credentials = jsondecode(data.aws_secretsmanager_secret_version.postgresql_credentials.secret_string)
+  postgres-credentials = jsondecode(data.aws_secretsmanager_secret_version.postgres-credentials.secret_string)
 }
 
 data "aws_db_instance" "rds" {
