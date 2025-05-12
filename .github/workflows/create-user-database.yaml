@@ -43,13 +43,11 @@ jobs:
 
       - name: Terraform Init
         working-directory: infrastructure/stacks/user-database
-        env:
-          TF_WORKSPACE: ${{ github.event.inputs.workspace }}
         run: terraform init
 
       - name: Check current workspace
         working-directory: infrastructure/stacks/user-database
-        run: terraform workspace select ${{ github.event.inputs.workspace }}
+        run: terraform workspace list && terraform workspace select ${{ github.event.inputs.workspace }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/user-database
