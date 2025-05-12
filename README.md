@@ -15,6 +15,15 @@ This repository exists to hold the infrastructure configuration for the BSS proj
   - [Contacts](#contacts)
   - [Licence](#licence)
 
+## Dev Environment use
+
+The development environment consists of three parts:
+- Postgres Database
+- Containerised App
+- Elasticache Cache
+
+The database can be created and destroyed by using the [Github Action](https://github.com/NHSDigital/screening-terraform-bss/actions/workflows/create-user-database.yaml) If you don't have your shortcode in the list then it will need to be added to the list on line 17 of
+
 ## Setup
 
 To use this repository first you will need to clone it down to your local machine, you should use the `ssh` option for this if you wish to contribute back to the project.
