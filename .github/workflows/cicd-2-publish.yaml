@@ -1,10 +1,10 @@
 name: "CI/CD publish"
 
-on:
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - main
 
 jobs:
   metadata:
