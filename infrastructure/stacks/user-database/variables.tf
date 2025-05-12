@@ -13,3 +13,7 @@ variable "environment" {
   type        = string
 }
 
+variable "db_name" {
+
+}
+
