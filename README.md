@@ -15,7 +15,7 @@ This repository exists to hold the infrastructure configuration for the BSS proj
   - [Contacts](#contacts)
   - [Licence](#licence)
 
-## Dev Environment use
+## Development Environment use
 
 The development environment consists of three parts:
 - Postgres Database
@@ -33,12 +33,12 @@ The application can be deployed into kubernetes, to do that you will first need 
 aws eks update-kubeconfig --region eu-west-2 --name cicd
 ```
 After that you can deploy it using a config file, or you can just commit it into git and the pipeline will deploy it into EKS for you
->**To be implimented**
+>**To be implemented**
 
 ### Cache
 
 Elasticache is automatically deployed alongside the Postgres database, it is managed in the same pipeline so nothing special needed.
->**To be implimented**
+>**To be implemented**
 
 ## Setup
 
