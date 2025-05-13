@@ -15,6 +15,34 @@ This repository exists to hold the infrastructure configuration for the BSS proj
   - [Contacts](#contacts)
   - [Licence](#licence)
 
+## Development Environment use
+
+The development environment consists of three parts:
+
+- Postgres Database
+- Containerised App
+- Elasticache Cache
+
+### Database
+
+The database can be created and destroyed by using the [Github Action](https://github.com/NHSDigital/screening-terraform-bss/actions/workflows/create-user-database.yaml) If you don't have your shortcode in the list then it will need to be added to the list on line 17 of the [workflow](https://github.com/NHSDigital/screening-terraform-bss/blob/main/.github/workflows/manage-dev-database.yaml)
+
+### Application
+
+The application can be deployed into kubernetes, to do that you will first need to authenticate with the EKS cluster, you can do that with this command once you have authenticated your terminal session:
+
+```bash
+aws eks update-kubeconfig --region eu-west-2 --name cicd
+```
+
+After that you can deploy it using a config file, or you can just commit it into git and the pipeline will deploy it into EKS for you
+>**To be implemented**
+
+### Cache
+
+Elasticache is automatically deployed alongside the Postgres database, it is managed in the same pipeline so nothing special needed.
+>**To be implemented**
+
 ## Setup
 
 To use this repository first you will need to clone it down to your local machine, you should use the `ssh` option for this if you wish to contribute back to the project.

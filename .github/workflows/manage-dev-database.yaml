@@ -1,4 +1,4 @@
-name: Manage Dev Environment
+name: Manage Dev Database
 
 on:
   workflow_dispatch:
