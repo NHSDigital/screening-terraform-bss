@@ -1,4 +1,0 @@
-Github
-Dev
-shortcode
-config
