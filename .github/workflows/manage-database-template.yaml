@@ -57,9 +57,6 @@ jobs:
       - name: Install postgresql client
         run: apt update && apt install -y postgresql-client
 
-      - name: Download the sql backup
-        run:
-
       - name: Cleanup
         if: always()
         working-directory: infrastructure/stacks/user-database
