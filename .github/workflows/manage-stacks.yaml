@@ -67,5 +67,5 @@ jobs:
       - name: Cleanup
         if: always()
         working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
-        run: terraform environment select default
+        run: terraform workspace select default
 
