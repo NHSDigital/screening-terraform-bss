@@ -1,0 +1,66 @@
+name: Manage VPC
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform (apply/destroy)'
+        required: true
+        type: choice
+        options:
+          - apply
+          - destroy
+      environment:
+        description: 'Terraform environment to use'
+        required: true
+        type: choice
+        options:
+          - cicd
+          - nft
+          - uat
+          - prod
+          # Add new environments here
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.11.4'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
+          aws-region: eu-west-2
+
+      - name: Terraform Init
+        working-directory: infrastructure/stacks/user-database
+        run: terraform init
+
+      - name: Terraform ${{ github.event.inputs.action }}
+        working-directory: infrastructure/stacks/vpc
+        env:
+          TF_VAR_db_name: ${{ github.event.inputs.environment }}
+        run: |
+        declare -A var_files
+        var_files[cicd]="../../environments/01-DEV/main.tfvars"
+        var_files[nft]="../../environments/02-NFT/main.tfvars"
+        var_files[uat]="../../environments/03-NFT/main.tfvars"
+        var_files[prod]="../../environments/04-PROD/main.tfvars"
+        terraform ${{ github.event.inputs.action }} -auto-approve -var-file="${var_files[${{ github.event.inputs.environment }}]}"
+
+      - name: Cleanup
+        if: always()
+        working-directory: infrastructure/stacks/user-database
+        run: terraform environment select default
+
