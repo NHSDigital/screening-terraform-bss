@@ -107,6 +107,7 @@ module "eks" {
         Environment = var.environment
       }
     }
+    security_group_ids = [aws_security_group.fargate_ingress.id]
   }
 
   # Cluster access entry
@@ -154,3 +155,21 @@ resource "aws_eks_access_policy_association" "user_namespace" {
   }
 }
 
+resource "aws_security_group" "fargate_ingress" {
+  name        = "${var.name}-fargate-ingress"
+  description = "Allow inbound http traffic"
+  vpc_id      = data.aws_vpc.vpc.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
