@@ -136,7 +136,7 @@ resource "aws_eks_access_entry" "user" {
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
 }
-resource "aws_eks_access_policy_association" "user" {
+resource "aws_eks_access_policy_association" "user_cluster" {
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
@@ -144,7 +144,7 @@ resource "aws_eks_access_policy_association" "user" {
     type = "cluster"
   }
 }
-resource "aws_eks_access_policy_association" "user" {
+resource "aws_eks_access_policy_association" "user_namespace" {
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
