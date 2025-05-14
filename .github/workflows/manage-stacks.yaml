@@ -1,4 +1,4 @@
-name: Manage VPC
+name: Manage Stacks
 
 on:
   workflow_dispatch:
@@ -10,6 +10,15 @@ on:
         options:
           - apply
           - destroy
+      stack:
+        description: 'Which stack to manage'
+        required: true
+        type: choice
+        options:
+          - vpc
+          - eks
+          - rds
+          - elasticache
       environment:
         description: 'Terraform environment to use'
         required: true
@@ -44,11 +53,11 @@ jobs:
           aws-region: eu-west-2
 
       - name: Terraform Init
-        working-directory: infrastructure/stacks/user-database
+        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
         run: terraform init
 
       - name: Terraform ${{ github.event.inputs.action }}
-        working-directory: infrastructure/stacks/vpc
+        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
         env:
           TF_VAR_db_name: ${{ github.event.inputs.environment }}
         run: |
@@ -61,6 +70,6 @@ jobs:
 
       - name: Cleanup
         if: always()
-        working-directory: infrastructure/stacks/user-database
+        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
         run: terraform environment select default
 
