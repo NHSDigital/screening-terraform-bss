@@ -115,9 +115,8 @@ module "eks" {
 
 }
 
-resource "null_resource" "kubectl" {
-  depends_on = [module.eks]
-  provisioner "local-exec" {
-    command = "aws eks --region eu-west-2 update-kubeconfig --name ${var.environment}"
-  }
+resource "aws_eks_access_entry" "admin" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
 }
+
