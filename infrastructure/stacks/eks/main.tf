@@ -95,6 +95,7 @@ module "eks" {
       tags = {
         Environment = var.environment
       }
+      security_group_ids = [aws_security_group.fargate_ingress.id]
     }
     kube-system = {
       name = "kube-system"
@@ -106,8 +107,8 @@ module "eks" {
       tags = {
         Environment = var.environment
       }
+      security_group_ids = [aws_security_group.fargate_ingress.id]
     }
-    security_group_ids = [aws_security_group.fargate_ingress.id]
   }
 
   # Cluster access entry
