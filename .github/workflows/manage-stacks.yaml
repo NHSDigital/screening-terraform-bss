@@ -58,15 +58,11 @@ jobs:
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
-        run: |
-        declare -A var_files
-        var_files[cicd]="../../environments/01-DEV/main.tfvars"
-        var_files[nft]="../../environments/02-NFT/main.tfvars"
-        var_files[uat]="../../environments/03-NFT/main.tfvars"
-        var_files[prod]="../../environments/04-PROD/main.tfvars"
-        export action="${{ github.event.inputs.action }}"
-        export environment="${{ github.events.inputs.environment }}"
-        terraform "$action" -auto-approve -var-file="${var_files[$environment]}"
+        env:
+          TF_VAR_ENVIRONMENT: ${{ github.event.inputs.environment }}
+          TF_ACTION: ${{ github.event.inputs.action }}
+          TF_STACK: ${{ github.events.inputs.stack }}
+        run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/$TF_VAR_ENVIRONMENT/main.tfvars"
 
       - name: Cleanup
         if: always()
