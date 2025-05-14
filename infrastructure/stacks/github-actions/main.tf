@@ -74,7 +74,7 @@ resource "aws_iam_policy" "github_actions_ec2" {
       {
         Effect = "Allow"
         Action = [
-          "ec2:DescribeVpcs",
+          "ec2:Describe*",
         ]
         Resource = "*"
       }
@@ -225,7 +225,8 @@ resource "aws_iam_policy" "github_actions_iam" {
       {
         Effect = "Allow"
         Action = [
-          "iam:GetRole",
+          "iam:Get*",
+          "iam:List*"
         ]
         Resource = "*"
       }
@@ -246,7 +247,8 @@ resource "aws_iam_policy" "github_actions_logs" {
       {
         Effect = "Allow"
         Action = [
-          "logs:DescribeLogsGroups",
+          "logs:Describe*",
+          "logs:List*"
         ]
         Resource = "*"
       }
@@ -256,5 +258,26 @@ resource "aws_iam_policy" "github_actions_logs" {
 resource "aws_iam_role_policy_attachment" "github_actions_logs" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_logs.arn
+}
+
+resource "aws_iam_policy" "github_actions_kms" {
+  name        = "github-actions-kms"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_kms" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_kms.arn
 }
 
