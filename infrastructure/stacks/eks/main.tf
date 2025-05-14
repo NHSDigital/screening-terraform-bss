@@ -122,7 +122,7 @@ resource "aws_eks_access_entry" "admin" {
 resource "aws_eks_access_policy_association" "admin" {
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminPolicy"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   access_scope {
     type = "cluster"
   }
