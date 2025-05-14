@@ -65,6 +65,48 @@ resource "aws_iam_role" "github_actions" {
   })
 }
 
+resource "aws_iam_policy" "github_actions_ec2" {
+  name        = "github-actions-ec2"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeVpcs",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_ec2" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_ec2.arn
+}
+
+resource "aws_iam_policy" "github_actions_vpc" {
+  name        = "github-actions-vpc"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "vpc:*",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_vpc.arn
+}
+
 resource "aws_iam_policy" "github_actions_rds" {
   name        = "github-actions-rds"
   description = "Policy for GitHub Actions"
@@ -81,6 +123,11 @@ resource "aws_iam_policy" "github_actions_rds" {
     ]
   })
 }
+resource "aws_iam_role_policy_attachment" "github_actions_rds" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_rds.arn
+}
+
 resource "aws_iam_policy" "github_actions_eks" {
   name        = "github-actions-eks"
   description = "Policy for GitHub Actions"
@@ -97,6 +144,11 @@ resource "aws_iam_policy" "github_actions_eks" {
     ]
   })
 }
+resource "aws_iam_role_policy_attachment" "github_actions_eks" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_eks.arn
+}
+
 resource "aws_iam_policy" "github_actions_elasticache" {
   name        = "github-actions-elasticache"
   description = "Policy for GitHub Actions"
@@ -112,6 +164,10 @@ resource "aws_iam_policy" "github_actions_elasticache" {
       }
     ]
   })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_elasticache" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_elasticache.arn
 }
 
 resource "aws_iam_policy" "github_actions_s3" {
@@ -133,6 +189,10 @@ resource "aws_iam_policy" "github_actions_s3" {
     ]
   })
 }
+resource "aws_iam_role_policy_attachment" "github_actions_s3" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_s3.arn
+}
 
 resource "aws_iam_policy" "github_actions_secrets" {
   name        = "github-actions-secrets"
@@ -151,29 +211,50 @@ resource "aws_iam_policy" "github_actions_secrets" {
     ]
   })
 }
-
-resource "aws_iam_role_policy_attachment" "github_actions_rds" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_rds.arn
-}
-
-resource "aws_iam_role_policy_attachment" "github_actions_eks" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_eks.arn
-}
-
-resource "aws_iam_role_policy_attachment" "github_actions_elasticache" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_elasticache.arn
-}
-
-resource "aws_iam_role_policy_attachment" "github_actions_s3" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_s3.arn
-}
-
 resource "aws_iam_role_policy_attachment" "github_actions_secrets" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_secrets.arn
+}
+
+resource "aws_iam_policy" "github_actions_iam" {
+  name        = "github-actions-iam"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:GetRole",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_iam" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_iam.arn
+}
+
+resource "aws_iam_policy" "github_actions_logs" {
+  name        = "github-actions-logs"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:DescribeLogsGroups",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_logs" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_logs.arn
 }
 
