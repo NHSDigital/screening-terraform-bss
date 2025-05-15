@@ -231,7 +231,9 @@ resource "aws_iam_policy" "github_actions_iam" {
         Effect = "Allow"
         Action = [
           "iam:Get*",
-          "iam:List*"
+          "iam:List*",
+          "iam:Detach*",
+          "iam:Delete*"
         ]
         Resource = "*"
       }
