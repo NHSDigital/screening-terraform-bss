@@ -143,7 +143,7 @@ resource "aws_db_instance" "rds" {
   maintenance_window              = var.maintenance_window
   backup_window                   = var.backup_window
   backup_retention_period         = var.backup_retention_period
-  final_snapshot_identifier       = "${var.name}-final"
+  final_snapshot_identifier       = "${var.name}-final-${timestamp()}"
   publicly_accessible             = var.publicly_accessible
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot

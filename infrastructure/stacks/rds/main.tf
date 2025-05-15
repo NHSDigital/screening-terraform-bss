@@ -27,5 +27,6 @@ module "rds" {
   rds_engine_version  = "17"
   publicly_accessible = true
   ingress_cidr        = var.ingress_cidr
+  skip_final_snapshot = true
 }
 

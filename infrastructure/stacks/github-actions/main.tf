@@ -75,6 +75,11 @@ resource "aws_iam_policy" "github_actions_ec2" {
         Effect = "Allow"
         Action = [
           "ec2:Describe*",
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateTags",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:DeleteSecurityGroup",
+          "ec2:*"
         ]
         Resource = "*"
       }
@@ -226,7 +231,9 @@ resource "aws_iam_policy" "github_actions_iam" {
         Effect = "Allow"
         Action = [
           "iam:Get*",
-          "iam:List*"
+          "iam:List*",
+          "iam:Detach*",
+          "iam:Delete*"
         ]
         Resource = "*"
       }
