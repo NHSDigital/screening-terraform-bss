@@ -68,9 +68,9 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   cluster_addons = {
-    # coredns = {
-    #   most_recent = true
-    # }
+    coredns = {
+      most_recent = true
+    }
     kube-proxy = {
       most_recent = true
     }
@@ -128,10 +128,6 @@ resource "aws_eks_access_policy_association" "admin" {
   access_scope {
     type = "cluster"
   }
-  # access_scope {
-  #   type       = "namespace"
-  #   namespaces = ["default", "ancl11", "stma7", "kube-system"]
-  # }
 }
 
 resource "aws_eks_access_entry" "user" {
@@ -166,11 +162,18 @@ resource "aws_security_group" "fargate_ingress" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = -1
+    to_port     = -1
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
 }
+
