@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "screening-bss-terraform-state"
+    bucket       = "nhse-bss-cicd-state"
     key          = "terraform-state/vpc.tfstate"
     region       = "eu-west-2"
     encrypt      = true
