@@ -55,17 +55,13 @@ function run-grype-in-docker() {
   # shellcheck disable=SC2155
   local image=$(name=ghcr.io/anchore/grype docker-get-image-version-and-pull)
 
-  # docker run --rm -v /tmp/grype/db:/.cache/grype/db ghcr.io/anchore/grype db update
-
   docker run --rm --platform linux/amd64 \
     --volume "$PWD":/workdir \
-    --volume /tmp/grype/db:/.cache/grype/db \
     "$image" \
       sbom:/workdir/sbom-repository-report.json \
       --config /workdir/scripts/config/grype.yaml \
       --output json \
       --file /workdir/vulnerabilities-repository-report.tmp.json \
-    dbupdate
 }
 
 function enrich-report() {
