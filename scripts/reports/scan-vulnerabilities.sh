@@ -61,7 +61,7 @@ function run-grype-in-docker() {
       sbom:/workdir/sbom-repository-report.json \
       --config /workdir/scripts/config/grype.yaml \
       --output json \
-      --file /workdir/vulnerabilities-repository-report.tmp.json \
+      --file /workdir/vulnerabilities-repository-report.tmp.json
 }
 
 function enrich-report() {
