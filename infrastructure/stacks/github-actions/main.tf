@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "screening-bss-terraform-state"
+    bucket       = "nhse-bss-cicd-state"
     key          = "terraform-state/github-actions.tfstate"
     region       = "eu-west-2"
     encrypt      = true
@@ -75,6 +75,11 @@ resource "aws_iam_policy" "github_actions_ec2" {
         Effect = "Allow"
         Action = [
           "ec2:Describe*",
+          "ec2:CreateSecurityGroup",
+          "ec2:CreateTags",
+          "ec2:RevokeSecurityGroupEgress",
+          "ec2:DeleteSecurityGroup",
+          "ec2:*"
         ]
         Resource = "*"
       }
@@ -226,7 +231,9 @@ resource "aws_iam_policy" "github_actions_iam" {
         Effect = "Allow"
         Action = [
           "iam:Get*",
-          "iam:List*"
+          "iam:List*",
+          "iam:Detach*",
+          "iam:Delete*"
         ]
         Resource = "*"
       }
@@ -248,7 +255,8 @@ resource "aws_iam_policy" "github_actions_logs" {
         Effect = "Allow"
         Action = [
           "logs:Describe*",
-          "logs:List*"
+          "logs:List*",
+          "logs:DeleteLogGroup"
         ]
         Resource = "*"
       }

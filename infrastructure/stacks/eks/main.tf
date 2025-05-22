@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "screening-bss-terraform-state"
+    bucket       = "nhse-bss-cicd-state"
     key          = "terraform-state/eks.tfstate"
     region       = "eu-west-2"
     encrypt      = true
@@ -68,9 +68,9 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   cluster_addons = {
-    # coredns = {
-    #   most_recent = true
-    # }
+    coredns = {
+      most_recent = true
+    }
     kube-proxy = {
       most_recent = true
     }
@@ -95,6 +95,7 @@ module "eks" {
       tags = {
         Environment = var.environment
       }
+      security_group_ids = [aws_security_group.fargate_ingress.id]
     }
     kube-system = {
       name = "kube-system"
@@ -106,6 +107,7 @@ module "eks" {
       tags = {
         Environment = var.environment
       }
+      security_group_ids = [aws_security_group.fargate_ingress.id]
     }
   }
 
@@ -126,10 +128,6 @@ resource "aws_eks_access_policy_association" "admin" {
   access_scope {
     type = "cluster"
   }
-  # access_scope {
-  #   type       = "namespace"
-  #   namespaces = ["default", "ancl11", "stma7", "kube-system"]
-  # }
 }
 
 resource "aws_eks_access_entry" "user" {
@@ -152,5 +150,30 @@ resource "aws_eks_access_policy_association" "user_namespace" {
     type       = "namespace"
     namespaces = ["default", "ancl11", "stma7"]
   }
+}
+
+resource "aws_security_group" "fargate_ingress" {
+  name        = "${var.name}-fargate-ingress"
+  description = "Allow inbound http traffic"
+  vpc_id      = data.aws_vpc.vpc.id
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 }
 

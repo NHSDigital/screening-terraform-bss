@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket       = "screening-bss-terraform-state"
+    bucket       = "nhse-bss-cicd-state"
     key          = "terraform-state/rds.tfstate"
     region       = "eu-west-2"
     encrypt      = true
@@ -27,5 +27,6 @@ module "rds" {
   rds_engine_version  = "17"
   publicly_accessible = true
   ingress_cidr        = var.ingress_cidr
+  skip_final_snapshot = true
 }
 

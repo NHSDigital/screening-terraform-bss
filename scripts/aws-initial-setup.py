@@ -2,8 +2,9 @@ import boto3
 import os
 
 # Set S3 bucket name
-service = "screening-bss"
-s3_bucket_name = f"{service}-terraform-state"
+service = "bss"
+environment_name = "cicd"
+s3_bucket_name = f"nhse-{service}-{environment_name}-state"
 region = "eu-west-2"
 
 # Create S3 client
