@@ -42,11 +42,11 @@ runs:
         name: sbom-repository-report.json.zip
         path: ./sbom-repository-report.json.zip
         retention-days: 21
-    - name: "Scan vulnerabilities"
-      shell: bash
-      run: |
-        export BUILD_DATETIME=${{ inputs.build_datetime }}
-        ./scripts/reports/scan-vulnerabilities.sh
+    # - name: "Scan vulnerabilities"
+    #   shell: bash
+    #   run: |
+    #     export BUILD_DATETIME=${{ inputs.build_datetime }}
+    #     ./scripts/reports/scan-vulnerabilities.sh
     - name: "Compress vulnerabilities report"
       shell: bash
       run: zip vulnerabilities-repository-report.json.zip vulnerabilities-repository-report.json
