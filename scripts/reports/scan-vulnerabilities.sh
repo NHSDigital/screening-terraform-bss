@@ -57,6 +57,7 @@ function run-grype-in-docker() {
 
   docker run --rm --platform linux/amd64 \
     --volume "$PWD":/workdir \
+    --volume /tmp/grype/db:/.cache/grype/db \
     "$image" \
       sbom:/workdir/sbom-repository-report.json \
       --config /workdir/scripts/config/grype.yaml \
