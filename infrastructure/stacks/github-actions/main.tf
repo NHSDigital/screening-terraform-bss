@@ -233,7 +233,8 @@ resource "aws_iam_policy" "github_actions_iam" {
           "iam:Get*",
           "iam:List*",
           "iam:Detach*",
-          "iam:Delete*"
+          "iam:Delete*",
+          "iam:CreateRole"
         ]
         Resource = "*"
       }

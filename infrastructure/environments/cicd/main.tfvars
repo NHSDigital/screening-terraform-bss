@@ -4,5 +4,5 @@ environment = "cicd"
 # postgresql_secret_id = "postgresql-credentials"
 aws_secret_id = "postgres-credentials"
 ingress_cidr  = ["0.0.0.0/0"]
-name_prefix   = "nhse-bss-euwest2-dev"
+name_prefix   = "nhse-bss-euwest2-cicd"
 
