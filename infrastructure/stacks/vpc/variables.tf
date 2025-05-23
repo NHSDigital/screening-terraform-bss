@@ -4,11 +4,11 @@ variable "environment" {
 
 variable "name" {
   description = "The name of the resource"
+  default     = null
 }
 
 variable "name_prefix" {
   description = "the prefix for the name which containts the environment and business unit"
   type        = string
-  default     = null
 }
 
