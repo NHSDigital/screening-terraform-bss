@@ -22,7 +22,7 @@ resource "aws_subnet" "public_subnet_a" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
   tags = {
-    Name                     = "${var.name_prefix}${var.name}-public-a"
+    Name                     = "${var.name_prefix}${var.name}"
     "kubernetes.io/role/elb" = 1
     Type                     = "public"
   }
@@ -34,7 +34,7 @@ resource "aws_subnet" "public_subnet_b" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
   tags = {
-    Name                     = "${var.name_prefix}${var.name}-public-b"
+    Name                     = "${var.name_prefix}${var.name}"
     "kubernetes.io/role/elb" = 1
     Type                     = "public"
   }
@@ -47,7 +47,7 @@ resource "aws_subnet" "private_subnet_a" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = false
   tags = {
-    Name                                                  = "${var.name_prefix}${var.name}-private-a"
+    Name                                                  = "${var.name_prefix}${var.name}"
     "kubernetes.io/role/internal-elb"                     = 1
     "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
     Type                                                  = "private"
@@ -60,7 +60,7 @@ resource "aws_subnet" "private_subnet_b" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = false
   tags = {
-    Name                                                  = "${var.name_prefix}${var.name}-private-b"
+    Name                                                  = "${var.name_prefix}${var.name}"
     "kubernetes.io/role/internal-elb"                     = 1
     "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
     Type                                                  = "private"
@@ -72,7 +72,7 @@ resource "aws_subnet" "private_subnet_b" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "${var.name_prefix}${var.name} Gateway"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
@@ -86,7 +86,7 @@ resource "aws_route_table" "public_rt" {
     gateway_id = aws_internet_gateway.igw.id
   }
   tags = {
-    Name = "${var.name_prefix}${var.name} Public Route Table"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
@@ -96,13 +96,13 @@ resource "aws_nat_gateway" "nat_gw_a" {
   allocation_id = aws_eip.eip_a.id
   subnet_id     = aws_subnet.public_subnet_a.id
   tags = {
-    Name = "${var.name_prefix}${var.name} Public Route Table"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
 resource "aws_eip" "eip_a" {
   tags = {
-    Name = "${var.name_prefix}${var.name} Public Route Table"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
@@ -110,13 +110,13 @@ resource "aws_nat_gateway" "nat_gw_b" {
   allocation_id = aws_eip.eip_b.id
   subnet_id     = aws_subnet.public_subnet_b.id
   tags = {
-    Name = "${var.name_prefix}${var.name} NAT GW B"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
 resource "aws_eip" "eip_b" {
   tags = {
-    Name = "${var.name_prefix}${var.name} EIP B"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
@@ -131,7 +131,7 @@ resource "aws_route_table" "private_rt_a" {
     nat_gateway_id = aws_nat_gateway.nat_gw_a.id
   }
   tags = {
-    Name = "${var.name_prefix}${var.name} Private Route Table A"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
@@ -143,7 +143,7 @@ resource "aws_route_table" "private_rt_b" {
     nat_gateway_id = aws_nat_gateway.nat_gw_b.id
   }
   tags = {
-    Name = "${var.name_prefix}${var.name} Private Route Table B"
+    Name = "${var.name_prefix}${var.name}"
   }
 }
 
