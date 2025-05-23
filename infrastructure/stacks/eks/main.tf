@@ -53,7 +53,7 @@ module "vpc_eks" {
 
   cidr = "10.20.0.0/19"
 
-  azs = [for subnet in data.data.aws_subnet.private_subnets : subnet.availability_zone]
+  azs = [for subnet in data.aws_subnet.private_subnets : subnet.availability_zone]
   # azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
   private_subnets = data.aws_subnets.private_subnets.ids
   # private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
