@@ -1,4 +1,3 @@
-name = "bss"
 # rds_identifier = "bss"
 environment = "cicd"
 # cluster_version      = "1.32"

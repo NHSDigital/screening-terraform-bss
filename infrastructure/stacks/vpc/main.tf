@@ -20,7 +20,9 @@ provider "aws" {
 }
 
 module "vpc" {
-  source      = "github.com/NHSDigital/screening-terraform-modules/terraform_modules/vpc"
+  source      = "./modules/"
   environment = var.environment
   name        = var.name
+  name_prefix = var.name_prefix
 }
+
