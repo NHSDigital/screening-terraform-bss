@@ -1,30 +1,11 @@
-terraform {
-  backend "s3" {
-    bucket       = "nhse-bss-cicd-state"
-    key          = "terraform-state/eks.tfstate"
-    region       = "eu-west-2"
-    encrypt      = true
-    use_lockfile = true
-  }
+locals {
+  cluster_name = "${var.name_prefix}${var.name}"
 }
-
-provider "aws" {
-  region = "eu-west-2"
-  default_tags {
-    tags = {
-      Environment = var.environment
-      Terraform   = "True"
-    }
-  }
-}
-
-# This gets the aws account details so we can fetch the account ID
-data "aws_caller_identity" "current" {}
 
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = ["${var.environment}-${var.name}"]
+    values = ["${var.name_prefix}${var.vpc_name}"]
   }
 }
 
@@ -59,121 +40,143 @@ data "aws_subnets" "private_subnets" {
   }
 }
 
-module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+module "vpc_eks" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.18.1"
 
-  cluster_name    = var.environment
-  cluster_version = var.cluster_version
+  name = local.cluster_name
 
-  cluster_endpoint_public_access = true
+  cidr = "10.20.0.0/19"
 
-  cluster_addons = {
-    coredns = {
-      most_recent = true
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
+  azs = [data.aws_subnets.private_subnets[0].az, data.aws_subnets.private_subnets[1].az]
+  # azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+  private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
+  public_subnets  = [data.aws_subnets.public_subnets[0].cidr, data.aws_subnets.public_subnets[1].cidr]
+
+  enable_nat_gateway     = true
+  single_nat_gateway     = true
+  one_nat_gateway_per_az = false
+
+  enable_vpn_gateway = true
+
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  propagate_private_route_tables_vgw = true
+  propagate_public_route_tables_vgw  = true
+
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb" = "1",
+    "mapPublicIpOnLaunch"             = "FALSE"
+    "karpenter.sh/discovery"          = local.cluster_name
+    "kubernetes.io/role/cni"          = "1"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/role/elb" = "1",
+    "mapPublicIpOnLaunch"    = "TRUE"
+  }
+
+  tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+  }
+}
+
+resource "aws_eks_cluster" "cluster" {
+  name     = local.cluster_name
+  role_arn = aws_iam_role.cluster.arn
+  version  = "1.32"
+
+  vpc_config {
+    subnet_ids              = module.vpc_eks.private_subnets
+    security_group_ids      = []
+    endpoint_private_access = "true"
+    endpoint_public_access  = "true"
+  }
+
+  access_config {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
+  }
+
+  bootstrap_self_managed_addons = false
+
+  zonal_shift_config {
+    enabled = true
+  }
+
+  compute_config {
+    enabled       = true
+    node_pools    = ["general-purpose", "system"]
+    node_role_arn = aws_iam_role.node.arn
+  }
+
+  kubernetes_network_config {
+    elastic_load_balancing {
+      enabled = true
     }
   }
 
-  vpc_id                   = data.aws_vpc.vpc.id
-  subnet_ids               = data.aws_subnets.private_subnets.ids
-  control_plane_subnet_ids = data.aws_subnets.public_subnets.ids
+  storage_config {
+    block_storage {
+      enabled = true
+    }
+  }
+}
 
-  # Fargate Profile
-  fargate_profiles = {
-    default = {
-      name = "default"
-      selectors = [
-        {
-          namespace = "default"
+resource "aws_iam_role" "cluster" {
+  name = local.cluster_name
+
+  assume_role_policy = data.aws_iam_policy_document.cluster_role_assume_role_policy.json
+}
+
+resource "aws_iam_role_policy_attachments_exclusive" "cluster" {
+  role_name = aws_iam_role.cluster.name
+  policy_arns = [
+    "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSServicePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  ]
+}
+
+data "aws_iam_policy_document" "cluster_role_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "node" {
+  name = local.cluster_name
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = ["sts:AssumeRole"]
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
         }
-      ]
-      tags = {
-        Environment = var.environment
-      }
-      security_group_ids = [aws_security_group.fargate_ingress.id]
-    }
-    kube-system = {
-      name = "kube-system"
-      selectors = [
-        {
-          namespace = "kube-system"
-        }
-      ]
-      tags = {
-        Environment = var.environment
-      }
-      security_group_ids = [aws_security_group.fargate_ingress.id]
-    }
-  }
-
-  # Cluster access entry
-  enable_cluster_creator_admin_permissions = true
-  authentication_mode                      = "API_AND_CONFIG_MAP"
-
+      },
+    ]
+  })
 }
 
-resource "aws_eks_access_entry" "admin" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
-}
-resource "aws_eks_access_policy_association" "admin" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-  access_scope {
-    type = "cluster"
-  }
+resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodeMinimalPolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy"
+  role       = aws_iam_role.node.name
 }
 
-resource "aws_eks_access_entry" "user" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
-}
-resource "aws_eks_access_policy_association" "user_cluster" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-  access_scope {
-    type = "cluster"
-  }
-}
-resource "aws_eks_access_policy_association" "user_namespace" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
-  access_scope {
-    type       = "namespace"
-    namespaces = ["default", "ancl11", "stma7"]
-  }
-}
-
-resource "aws_security_group" "fargate_ingress" {
-  name        = "${var.name}-fargate-ingress"
-  description = "Allow inbound http traffic"
-  vpc_id      = data.aws_vpc.vpc.id
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
+resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+  role       = aws_iam_role.node.name
 }
 

@@ -19,14 +19,3 @@ variable "account_id" {
   type        = string
 }
 
-variable "name_prefix" {
-  description = "the prefix for the name which containts the environment and business unit"
-  type        = string
-}
-
-variable "vpc_name" {
-  description = "name of the vpc"
-  type        = string
-  default     = ""
-}
-
