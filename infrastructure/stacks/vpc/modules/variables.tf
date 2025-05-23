@@ -7,8 +7,6 @@ variable "name" {
 }
 
 variable "name_prefix" {
-  description = "the prefix for the name which containts the environment and business unit"
-  type        = string
-  default     = null
+  description = "the environment and project"
 }
 
