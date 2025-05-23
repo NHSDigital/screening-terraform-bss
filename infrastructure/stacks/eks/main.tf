@@ -40,6 +40,11 @@ data "aws_subnets" "private_subnets" {
   }
 }
 
+data "aws_subnet" "private_subnets" {
+  for_each = toset(data.aws_subnets.private_subnets.ids)
+  id       = each.value
+}
+
 module "vpc_eks" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.18.1"
@@ -48,10 +53,11 @@ module "vpc_eks" {
 
   cidr = "10.20.0.0/19"
 
-  azs = [data.aws_subnets.private_subnets[0].az, data.aws_subnets.private_subnets[1].az]
+  azs = [for subnet in data.data.aws_subnet.private_subnets : subnet.availability_zone]
   # azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
-  public_subnets  = [data.aws_subnets.public_subnets[0].cidr, data.aws_subnets.public_subnets[1].cidr]
+  private_subnets = data.aws_subnets.private_subnets.ids
+  # private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
+  public_subnets = data.aws_subnets.public_subnets.ids
 
   enable_nat_gateway     = true
   single_nat_gateway     = true
