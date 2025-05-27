@@ -221,6 +221,27 @@ resource "aws_iam_role_policy_attachment" "github_actions_secrets" {
   policy_arn = aws_iam_policy.github_actions_secrets.arn
 }
 
+resource "aws_iam_policy" "github_actions_eks_iam" {
+  name        = "github-actions-eks-iam"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:AttachRolePolicy"
+        ]
+        Resource = "nhse-bss-euwest2-cicd-eks"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_eks_iam" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_iam.arn
+}
+
 resource "aws_iam_policy" "github_actions_iam" {
   name        = "github-actions-iam"
   description = "Policy for GitHub Actions"
@@ -234,7 +255,7 @@ resource "aws_iam_policy" "github_actions_iam" {
           "iam:List*",
           "iam:Detach*",
           "iam:Delete*",
-          "iam:CreateRole"
+          "iam:CreateRole",
         ]
         Resource = "*"
       }
@@ -245,7 +266,6 @@ resource "aws_iam_role_policy_attachment" "github_actions_iam" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_iam.arn
 }
-
 resource "aws_iam_policy" "github_actions_logs" {
   name        = "github-actions-logs"
   description = "Policy for GitHub Actions"
