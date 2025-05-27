@@ -6,7 +6,6 @@ variable "environment" {
 variable "name" {
   description = "The name of the resource"
   type        = string
-  default     = "eks"
 }
 
 variable "cluster_version" {
@@ -18,16 +17,5 @@ variable "cluster_version" {
 variable "account_id" {
   description = "The AWS account ID"
   type        = string
-}
-
-variable "name_prefix" {
-  description = "the prefix for the name which containts the environment and business unit"
-  type        = string
-}
-
-variable "vpc_name" {
-  description = "name of the vpc"
-  type        = string
-  default     = ""
 }
 
