@@ -6,7 +6,7 @@ variable "environment" {
 variable "name" {
   description = "The name of the resource"
   type        = string
-  default     = ""
+  default     = "eks"
 }
 
 variable "cluster_version" {

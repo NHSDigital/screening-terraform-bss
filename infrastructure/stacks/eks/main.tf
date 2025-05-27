@@ -56,7 +56,7 @@ module "vpc_eks" {
 
   name = local.cluster_name
 
-  cidr = "10.0.0.0/16"
+  cidr = "10.0.0.0/24"
 
   azs             = [for subnet in data.aws_subnet.private_subnets : subnet.availability_zone]
   private_subnets = [for subnet in data.aws_subnet.private_subnets : subnet.cidr_block]
