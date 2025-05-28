@@ -140,7 +140,7 @@ resource "aws_eks_cluster" "cluster" {
 }
 
 resource "aws_iam_role" "cluster" {
-  name = local.cluster_name
+  name = "${local.cluster_name}-cluster"
 
   assume_role_policy = data.aws_iam_policy_document.cluster_role_assume_role_policy.json
 }
@@ -170,7 +170,7 @@ data "aws_iam_policy_document" "cluster_role_assume_role_policy" {
 }
 
 resource "aws_iam_role" "node" {
-  name = local.cluster_name
+  name = "${local.cluster_name}-node"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
