@@ -230,7 +230,8 @@ resource "aws_iam_policy" "github_actions_eks_iam" {
       {
         Effect = "Allow"
         Action = [
-          "iam:AttachRolePolicy"
+          "iam:AttachRolePolicy",
+          "iam:TagRole"
         ]
         Resource = "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks*"
       }
