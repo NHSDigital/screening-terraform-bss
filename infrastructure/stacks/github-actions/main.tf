@@ -232,7 +232,7 @@ resource "aws_iam_policy" "github_actions_eks_iam" {
         Action = [
           "iam:AttachRolePolicy"
         ]
-        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/nhse-bss-euwest2-cicd-eks"
+        Resource = "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks"
       }
     ]
   })
