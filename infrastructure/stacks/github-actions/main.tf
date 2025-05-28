@@ -232,7 +232,7 @@ resource "aws_iam_policy" "github_actions_eks_iam" {
         Action = [
           "iam:AttachRolePolicy"
         ]
-        Resource = "nhse-bss-euwest2-cicd-eks"
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/nhse-bss-euwest2-cicd-eks"
       }
     ]
   })
@@ -266,6 +266,7 @@ resource "aws_iam_role_policy_attachment" "github_actions_iam" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_iam.arn
 }
+
 resource "aws_iam_policy" "github_actions_logs" {
   name        = "github-actions-logs"
   description = "Policy for GitHub Actions"
