@@ -215,7 +215,7 @@ resource "aws_iam_policy" "github_actions_secrets" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = "arn:aws:secretsmanager:eu-west-2:${var.account_id}:secret:*"
+        Resource = "arn:aws:secretsmanager:eu-west-2:${var.aws_account_id}:secret:*"
       }
     ]
   })
@@ -239,8 +239,8 @@ resource "aws_iam_policy" "github_actions_eks_iam" {
           "iam:GetRole",
         ]
         Resource = [
-          "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks-cluster",
-          "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks-node"
+          "arn:aws:iam::${var.aws_account_id}:role/nhse-bss-euwest2-cicd-eks-cluster",
+          "arn:aws:iam::${var.aws_account_id}:role/nhse-bss-euwest2-cicd-eks-node"
         ]
       }
     ]
