@@ -27,25 +27,25 @@ resource "aws_iam_role" "ecs_task_role" {
 
 
 # Allow access to Instana secrets for Fargate monitoring
-data "aws_iam_policy_document" "ecs_task_role" {
-  statement {
-    sid    = "AllowSecrets"
-    effect = "Allow"
-    actions = [
-      "secretsmanager:GetSecretValue"
-    ]
-    resources = [
-      # aws_secretsmanager_secret_version.sample_app.arn
-    ]
-  }
-}
+# data "aws_iam_policy_document" "ecs_task_role" {
+#   statement {
+#     sid    = "AllowSecrets"
+#     effect = "Allow"
+#     actions = [
+#       "secretsmanager:GetSecretValue"
+#     ]
+#     resources = [
+#       # aws_secretsmanager_secret_version.sample_app.arn
+#     ]
+#   }
+# }
 
 resource "aws_iam_policy" "ecs_task_policy" {
   name   = "sample-app-policy"
   policy = data.aws_iam_policy_document.ecs_task_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "task_role_attachment" {
-  role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = aws_iam_policy.ecs_task_policy.arn
-}
+# resource "aws_iam_role_policy_attachment" "task_role_attachment" {
+#   role       = aws_iam_role.ecs_task_execution_role.name
+#   policy_arn = aws_iam_policy.ecs_task_policy.arn
+# }

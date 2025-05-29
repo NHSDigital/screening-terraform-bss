@@ -93,6 +93,8 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecs:Describe*",
           "elasticloadbalancing:Describe*",
           "ecs:DeregisterTaskDefinition",
+          "ecs:RegisterTaskDefinition",
+          "ecs:TagResource"
 
         ]
         Resource = "*"
@@ -105,8 +107,8 @@ resource "aws_iam_role_policy_attachment" "github_actions_ec2" {
   policy_arn = aws_iam_policy.github_actions_ec2.arn
 }
 
-resource "aws_iam_policy" "github_actions_vpc" {
-  name        = "github-actions-vpc"
+resource "aws_iam_policy" "github_actions_ecs_iam" {
+  name        = "github-actions-ecs-iam"
   description = "Policy for GitHub Actions"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -115,15 +117,16 @@ resource "aws_iam_policy" "github_actions_vpc" {
         Effect = "Allow"
         Action = [
           "iam:CreatePolicy",
+          "iam:TagPolicy"
         ]
-        Resource = "arn:aws:iam::${var.aws_account_id}:role/sample-app-policy",
+        Resource = "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy",
       }
     ]
   })
 }
-resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
+resource "aws_iam_role_policy_attachment" "github_actions_ecs_iam" {
   role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_vpc.arn
+  policy_arn = aws_iam_policy.github_actions_ecs_iam.arn
 }
 
 # resource "aws_iam_policy" "github_actions_rds" {
