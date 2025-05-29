@@ -122,7 +122,8 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
         ]
         Resource = [
           "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy",
-          "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-role"
+          "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-role",
+          "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-execution-role"
         ]
       }
     ]
