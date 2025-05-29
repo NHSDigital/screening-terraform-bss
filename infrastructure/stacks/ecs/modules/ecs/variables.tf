@@ -21,3 +21,13 @@ variable "container_port" {
 }
 
 
+variable "vpc_name" {
+  description = "name of the vpc"
+  type        = string
+  default     = ""
+}
+
+variable "environment" {
+  description = "The name of the Environment this is deployed into, for example CICD, NFT, UAT or PROD"
+  type        = string
+}
