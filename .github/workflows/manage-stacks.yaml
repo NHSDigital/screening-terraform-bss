@@ -19,6 +19,7 @@ on:
           - eks
           - rds
           - elasticache
+          - ecs
       environment:
         description: 'Terraform environment to use'
         required: true
