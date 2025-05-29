@@ -1,3 +1,24 @@
+terraform {
+  backend "s3" {
+    bucket       = "nhse-bss-cicd-state"
+    key          = "terraform-state/ecr.tfstate"
+    region       = "eu-west-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+
+provider "aws" {
+  region = "eu-west-2"
+  default_tags {
+    tags = {
+      Environment = var.environment
+      Terraform   = "True"
+      Stack       = "ECR"
+    }
+  }
+}
+
 resource "aws_ecr_repository" "image_repository" {
   name = "${var.name_prefix}"
 }
