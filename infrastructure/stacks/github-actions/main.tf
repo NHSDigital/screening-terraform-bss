@@ -89,7 +89,11 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecr:ListTagsForResource",
           "ecr:SetRepositoryPolicy",
           "ecr:TagResource",
-          "ecr:GetRepositoryPolicy"
+          "ecr:GetRepositoryPolicy",
+          "ecs:Describe*",
+          "elasticloadbalancing:Describe*",
+          "ecs:DeregisterTaskDefinition",
+
         ]
         Resource = "*"
       }
@@ -101,26 +105,26 @@ resource "aws_iam_role_policy_attachment" "github_actions_ec2" {
   policy_arn = aws_iam_policy.github_actions_ec2.arn
 }
 
-# resource "aws_iam_policy" "github_actions_vpc" {
-#   name        = "github-actions-vpc"
-#   description = "Policy for GitHub Actions"
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Action = [
-#           "vpc:*",
-#         ]
-#         Resource = "*"
-#       }
-#     ]
-#   })
-# }
-# resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
-#   role       = aws_iam_role.github_actions.name
-#   policy_arn = aws_iam_policy.github_actions_vpc.arn
-# }
+resource "aws_iam_policy" "github_actions_vpc" {
+  name        = "github-actions-vpc"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:CreatePolicy",
+        ]
+        Resource = "arn:aws:iam::${var.aws_account_id}:role/sample-app-policy",
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_vpc.arn
+}
 
 # resource "aws_iam_policy" "github_actions_rds" {
 #   name        = "github-actions-rds"
