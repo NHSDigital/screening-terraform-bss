@@ -15,7 +15,7 @@ variable "cluster_version" {
   default     = "1.32"
 }
 
-variable "account_id" {
+variable "aws_account_id" {
   description = "The AWS account ID"
   type        = string
 }

@@ -8,7 +8,7 @@ variable "name_prefix" {
   type        = string
 }
 
-variable "account_id" {
+variable "aws_account_id" {
   description = "The AWS account number"
   type        = string
 }
