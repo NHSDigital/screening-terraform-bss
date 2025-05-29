@@ -20,6 +20,7 @@ on:
           - rds
           - elasticache
           - ecs
+          - ecr
       environment:
         description: 'Terraform environment to use'
         required: true
