@@ -22,10 +22,11 @@ resource "aws_subnet" "public_subnet_a" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
   tags = {
-    "Name"                   = "${var.name_prefix}${var.name}"
-    "kubernetes.io/role/elb" = "1"
-    "Type"                   = "public"
-    "mapPublicIpOnLaunch"    = "TRUE"
+    "Name"                                                = "${var.name_prefix}${var.name}"
+    "kubernetes.io/role/elb"                              = "1"
+    "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
+    "Type"                                                = "public"
+    "mapPublicIpOnLaunch"                                 = "TRUE"
   }
 }
 
@@ -35,10 +36,11 @@ resource "aws_subnet" "public_subnet_b" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
   tags = {
-    "Name"                   = "${var.name_prefix}${var.name}"
-    "kubernetes.io/role/elb" = "1"
-    "Type"                   = "public"
-    "mapPublicIpOnLaunch"    = "TRUE"
+    "Name"                                                = "${var.name_prefix}${var.name}"
+    "kubernetes.io/role/elb"                              = "1"
+    "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
+    "Type"                                                = "public"
+    "mapPublicIpOnLaunch"                                 = "TRUE"
   }
 }
 
