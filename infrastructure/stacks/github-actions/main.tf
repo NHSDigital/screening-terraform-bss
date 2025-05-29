@@ -117,9 +117,13 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
         Effect = "Allow"
         Action = [
           "iam:CreatePolicy",
-          "iam:TagPolicy"
+          "iam:TagPolicy",
+          "iam:PassRole"
         ]
-        Resource = "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy",
+        Resource = [
+          "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy",
+          "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-role"
+        ]
       }
     ]
   })

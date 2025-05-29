@@ -40,10 +40,10 @@ resource "aws_iam_role" "ecs_task_role" {
 #   }
 # }
 
-resource "aws_iam_policy" "ecs_task_policy" {
-  name   = "sample-app-policy"
-  policy = data.aws_iam_policy_document.ecs_task_role.json
-}
+# resource "aws_iam_policy" "ecs_task_policy" {
+#   name   = "sample-app-policy"
+#   policy = data.aws_iam_policy_document.ecs_task_role.json
+# }
 
 # resource "aws_iam_role_policy_attachment" "task_role_attachment" {
 #   role       = aws_iam_role.ecs_task_execution_role.name
