@@ -40,7 +40,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     [
       {
         "name" : "sample-app-container",
-        "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/texas-sample-app-repo:7c9ea9472313331fea977bb48ead5532a9e796b8"
+        "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
         "essential" : true,
         "environment" : [],
         "secrets" : [
