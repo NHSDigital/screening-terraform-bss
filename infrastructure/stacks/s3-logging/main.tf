@@ -29,8 +29,8 @@ module "logging_bucket" {
           "Effect" : "Allow",
           "Principal" : {
             "AWS" : [
-              "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5",
-              "arn:aws:iam::${var.account_id}:role/github-actions-role"
+              "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5",
+              "arn:aws:iam::${var.aws_account_id}:role/github-actions-role"
             ]
           },
           "Action" : "s3:*",
