@@ -94,8 +94,8 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "elasticloadbalancing:Describe*",
           "ecs:DeregisterTaskDefinition",
           "ecs:RegisterTaskDefinition",
-          "ecs:TagResource"
-
+          "ecs:TagResource",
+          "ecs:UpdateService"
         ]
         Resource = "*"
       }
@@ -117,11 +117,18 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
         Effect = "Allow"
         Action = [
           "iam:CreatePolicy",
-          "iam:TagPolicy",
+          "iam:TagPolicy"
+        ]
+        Resource = [
+          "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "iam:PassRole"
         ]
         Resource = [
-          "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy",
           "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-role",
           "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-execution-role"
         ]
@@ -129,6 +136,7 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
     ]
   })
 }
+
 resource "aws_iam_role_policy_attachment" "github_actions_ecs_iam" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_ecs_iam.arn
