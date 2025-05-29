@@ -14,7 +14,7 @@ provider "aws" {
     tags = {
       Environment = var.environment
       Terraform   = "True"
-      Stack       = "EKS"
+      Stack       = "ECS"
     }
   }
 }
