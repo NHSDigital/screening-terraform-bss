@@ -1,46 +1,47 @@
-data "aws_secretsmanager_secret" "account_ids" {
-  name = "aws_account_ids"
-}
-
-data "aws_secretsmanager_secret_version" "account_ids" {
-  secret_id = data.aws_secretsmanager_secret.account_ids.id
-}
-
-locals {
-  aws_account_ids      = jsondecode(data.aws_secretsmanager_secret_version.account_ids.secret_string)
-  live_mgmt_account_id = local.aws_account_ids["live-mgmt"]
-  local_account_id     = data.aws_caller_identity.current.account_id
-}
-
-data "aws_caller_identity" "current" {}
-
-data "terraform_remote_state" "vpc" {
-  backend = "s3"
-
-  config = {
-    bucket = var.terraform_state_s3_bucket
-    key    = "vpc/terraform.tfstate"
-    region = var.aws_region
+data "aws_vpc" "vpc" {
+  filter {
+    name   = "tag:Name"
+    values = ["${var.name_prefix}${var.vpc_name}"]
   }
 }
 
-data "terraform_remote_state" "security-groups" {
-  backend = "s3"
-
-  config = {
-    bucket = var.terraform_state_s3_bucket
-    key    = "security-groups/terraform.tfstate"
-    region = var.aws_region
+# Get public subnets
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+  filter {
+    name   = "tag:Environment"
+    values = [var.environment]
+  }
+  filter {
+    name   = "tag:kubernetes.io/role/elb"
+    values = ["1"]
+  }
+}
+# Get private subnets
+data "aws_subnets" "private_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+  filter {
+    name   = "tag:Environment"
+    values = [var.environment]
+  }
+  filter {
+    name   = "tag:kubernetes.io/role/internal-elb"
+    values = ["1"]
   }
 }
 
-data "terraform_remote_state" "route53" {
-  backend = "s3"
-
-  config = {
-    bucket = var.terraform_state_s3_bucket
-    key    = "route53/terraform.tfstate"
-    region = var.aws_region
-  }
+data "aws_subnet" "private_subnets" {
+  for_each = toset(data.aws_subnets.private_subnets.ids)
+  id       = each.value
 }
 
+data "aws_subnet" "public_subnets" {
+  for_each = toset(data.aws_subnets.public_subnets.ids)
+  id       = each.value
+}
