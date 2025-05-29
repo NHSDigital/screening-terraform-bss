@@ -35,7 +35,7 @@ data "aws_iam_policy_document" "ecs_task_role" {
       "secretsmanager:GetSecretValue"
     ]
     resources = [
-      aws_secretsmanager_secret_version.sample_app.arn
+      # aws_secretsmanager_secret_version.sample_app.arn
     ]
   }
 }

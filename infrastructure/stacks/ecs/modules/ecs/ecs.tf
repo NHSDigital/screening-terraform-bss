@@ -23,7 +23,7 @@ resource "aws_ecs_service" "ecs_service" {
     container_name   = "sample-app-container"
     container_port   = var.container_port
   }
-  depends_on = [aws_lb_listener.http_listener, aws_lb_listener.https_listener]
+  depends_on = [aws_lb_listener.http_listener]
 }
 
 # task definitions
@@ -86,7 +86,7 @@ resource "aws_cloudwatch_log_group" "sample_app_log_group" {
 }
 
 
-# load balancer 
+# load balancer
 
 resource "aws_alb" "application_load_balancer" {
   name = "sample-app-alb"
@@ -95,7 +95,7 @@ resource "aws_alb" "application_load_balancer" {
   internal = true
 
   load_balancer_type = "application"
-  subnets = data.aws_subnets.private_subnets.ids
+  subnets            = data.aws_subnets.private_subnets.ids
 
   security_groups = [aws_security_group.alb_sg.id]
 }
