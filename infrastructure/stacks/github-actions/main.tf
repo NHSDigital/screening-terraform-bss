@@ -66,7 +66,7 @@ resource "aws_iam_role" "github_actions" {
 }
 
 resource "aws_iam_policy" "github_actions_ec2" {
-  name        = "github-actions-ec2"
+  name        = "github-actions-global"
   description = "Policy for GitHub Actions"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -79,7 +79,11 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ec2:CreateTags",
           "ec2:RevokeSecurityGroupEgress",
           "ec2:DeleteSecurityGroup",
-          "ec2:*"
+          "ec2:*",
+          "vpc:*",
+          "rds:*",
+          "eks:*",
+          "elasticache:*"
         ]
         Resource = "*"
       }
@@ -91,89 +95,89 @@ resource "aws_iam_role_policy_attachment" "github_actions_ec2" {
   policy_arn = aws_iam_policy.github_actions_ec2.arn
 }
 
-resource "aws_iam_policy" "github_actions_vpc" {
-  name        = "github-actions-vpc"
-  description = "Policy for GitHub Actions"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "vpc:*",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_vpc.arn
-}
+# resource "aws_iam_policy" "github_actions_vpc" {
+#   name        = "github-actions-vpc"
+#   description = "Policy for GitHub Actions"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "vpc:*",
+#         ]
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
+# resource "aws_iam_role_policy_attachment" "github_actions_vpc" {
+#   role       = aws_iam_role.github_actions.name
+#   policy_arn = aws_iam_policy.github_actions_vpc.arn
+# }
 
-resource "aws_iam_policy" "github_actions_rds" {
-  name        = "github-actions-rds"
-  description = "Policy for GitHub Actions"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "rds:*",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "github_actions_rds" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_rds.arn
-}
+# resource "aws_iam_policy" "github_actions_rds" {
+#   name        = "github-actions-rds"
+#   description = "Policy for GitHub Actions"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "rds:*",
+#         ]
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
+# resource "aws_iam_role_policy_attachment" "github_actions_rds" {
+#   role       = aws_iam_role.github_actions.name
+#   policy_arn = aws_iam_policy.github_actions_rds.arn
+# }
 
-resource "aws_iam_policy" "github_actions_eks" {
-  name        = "github-actions-eks"
-  description = "Policy for GitHub Actions"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "eks:*",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "github_actions_eks" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_eks.arn
-}
+# resource "aws_iam_policy" "github_actions_eks" {
+#   name        = "github-actions-eks"
+#   description = "Policy for GitHub Actions"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "eks:*",
+#         ]
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
+# resource "aws_iam_role_policy_attachment" "github_actions_eks" {
+#   role       = aws_iam_role.github_actions.name
+#   policy_arn = aws_iam_policy.github_actions_eks.arn
+# }
 
-resource "aws_iam_policy" "github_actions_elasticache" {
-  name        = "github-actions-elasticache"
-  description = "Policy for GitHub Actions"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "elasticache:*",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-resource "aws_iam_role_policy_attachment" "github_actions_elasticache" {
-  role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_elasticache.arn
-}
+# resource "aws_iam_policy" "github_actions_elasticache" {
+#   name        = "github-actions-elasticache"
+#   description = "Policy for GitHub Actions"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "elasticache:*",
+#         ]
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
+# resource "aws_iam_role_policy_attachment" "github_actions_elasticache" {
+#   role       = aws_iam_role.github_actions.name
+#   policy_arn = aws_iam_policy.github_actions_elasticache.arn
+# }
 
 resource "aws_iam_policy" "github_actions_s3" {
   name        = "github-actions-s3"
@@ -221,6 +225,32 @@ resource "aws_iam_role_policy_attachment" "github_actions_secrets" {
   policy_arn = aws_iam_policy.github_actions_secrets.arn
 }
 
+resource "aws_iam_policy" "github_actions_eks_iam" {
+  name        = "github-actions-eks-iam"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:AttachRolePolicy",
+          "iam:PassRole",
+          "iam:GetRole",
+        ]
+        Resource = [
+          "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks-cluster",
+          "arn:aws:iam::${var.account_id}:role/nhse-bss-euwest2-cicd-eks-node"
+        ]
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_eks_iam" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_eks_iam.arn
+}
+
 resource "aws_iam_policy" "github_actions_iam" {
   name        = "github-actions-iam"
   description = "Policy for GitHub Actions"
@@ -234,7 +264,8 @@ resource "aws_iam_policy" "github_actions_iam" {
           "iam:List*",
           "iam:Detach*",
           "iam:Delete*",
-          "iam:CreateRole"
+          "iam:CreateRole",
+          "iam:TagRole"
         ]
         Resource = "*"
       }

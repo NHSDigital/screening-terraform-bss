@@ -1,3 +1,24 @@
+terraform {
+  backend "s3" {
+    bucket       = "nhse-bss-cicd-state"
+    key          = "terraform-state/eks.tfstate"
+    region       = "eu-west-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+
+provider "aws" {
+  region = "eu-west-2"
+  default_tags {
+    tags = {
+      Environment = var.environment
+      Terraform   = "True"
+      Stack       = "EKS"
+    }
+  }
+}
+
 locals {
   cluster_name = "${var.name_prefix}${var.name}"
 }
@@ -50,52 +71,42 @@ data "aws_subnet" "public_subnets" {
   id       = each.value
 }
 
-module "vpc_eks" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.18.1"
-
-  name = local.cluster_name
-
-  cidr = "10.0.0.0/24"
-
-  azs             = [for subnet in data.aws_subnet.private_subnets : subnet.availability_zone]
-  private_subnets = [for subnet in data.aws_subnet.private_subnets : subnet.cidr_block]
-  public_subnets  = [for subnet in data.aws_subnet.public_subnets : subnet.cidr_block]
-  # azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
-  # private_subnets = [for subnet in data.aws_subnet.private_subnets : subnet.cidrsubnet]
-  # private_subnets = data.aws_subnets.private_subnets.ids
-  # private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
-  # public_subnets = data.aws_subnets.public_subnets.ids
-  # public_subnets = [for subnet in data.aws_subnet.public_subnets : subnet.cidrsubnet]
-
-  enable_nat_gateway     = true
-  single_nat_gateway     = true
-  one_nat_gateway_per_az = false
-
-  enable_vpn_gateway = true
-
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
-  propagate_private_route_tables_vgw = true
-  propagate_public_route_tables_vgw  = true
-
-  private_subnet_tags = {
-    "kubernetes.io/role/internal-elb" = "1",
-    "mapPublicIpOnLaunch"             = "FALSE"
-    "karpenter.sh/discovery"          = local.cluster_name
-    "kubernetes.io/role/cni"          = "1"
-  }
-
-  public_subnet_tags = {
-    "kubernetes.io/role/elb" = "1",
-    "mapPublicIpOnLaunch"    = "TRUE"
-  }
-
-  tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-  }
-}
+# module "vpc_eks" {
+#   source  = "terraform-aws-modules/vpc/aws"
+#   version = "5.18.1"
+#   name = local.cluster_name
+#   cidr = "10.0.0.0/24"
+#   azs             = [for subnet in data.aws_subnet.private_subnets : subnet.availability_zone]
+#   private_subnets = [for subnet in data.aws_subnet.private_subnets : subnet.cidr_block]
+#   public_subnets  = [for subnet in data.aws_subnet.public_subnets : subnet.cidr_block]
+#   # azs             = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+#   # private_subnets = [for subnet in data.aws_subnet.private_subnets : subnet.cidrsubnet]
+#   # private_subnets = data.aws_subnets.private_subnets.ids
+#   # private_subnets = [data.aws_subnets.private_subnets[0].cidr, data.aws_subnets.private_subnets[1].cidr]
+#   # public_subnets = data.aws_subnets.public_subnets.ids
+#   # public_subnets = [for subnet in data.aws_subnet.public_subnets : subnet.cidrsubnet]
+#   enable_nat_gateway     = true
+#   single_nat_gateway     = true
+#   one_nat_gateway_per_az = false
+#   enable_vpn_gateway = true
+#   enable_dns_hostnames = true
+#   enable_dns_support   = true
+#   propagate_private_route_tables_vgw = true
+#   propagate_public_route_tables_vgw  = true
+#   private_subnet_tags = {
+#     "kubernetes.io/role/internal-elb" = "1",
+#     "mapPublicIpOnLaunch"             = "FALSE"
+#     "karpenter.sh/discovery"          = local.cluster_name
+#     "kubernetes.io/role/cni"          = "1"
+#   }
+#   public_subnet_tags = {
+#     "kubernetes.io/role/elb" = "1",
+#     "mapPublicIpOnLaunch"    = "TRUE"
+#   }
+#   tags = {
+#     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+#   }
+# }
 
 resource "aws_eks_cluster" "cluster" {
   name     = local.cluster_name
@@ -103,7 +114,8 @@ resource "aws_eks_cluster" "cluster" {
   version  = "1.32"
 
   vpc_config {
-    subnet_ids              = module.vpc_eks.private_subnets
+    # subnet_ids              = module.vpc_eks.private_subnets
+    subnet_ids              = data.aws_subnets.private_subnets.ids
     security_group_ids      = []
     endpoint_private_access = "true"
     endpoint_public_access  = "true"
@@ -140,7 +152,7 @@ resource "aws_eks_cluster" "cluster" {
 }
 
 resource "aws_iam_role" "cluster" {
-  name = local.cluster_name
+  name = "${local.cluster_name}-cluster"
 
   assume_role_policy = data.aws_iam_policy_document.cluster_role_assume_role_policy.json
 }
@@ -170,7 +182,7 @@ data "aws_iam_policy_document" "cluster_role_assume_role_policy" {
 }
 
 resource "aws_iam_role" "node" {
-  name = local.cluster_name
+  name = "${local.cluster_name}-node"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -193,5 +205,40 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodeMinimalPolicy
 resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
   role       = aws_iam_role.node.name
+}
+
+resource "aws_eks_access_entry" "admin" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
+}
+resource "aws_eks_access_policy_association" "admin" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  access_scope {
+    type = "cluster"
+  }
+}
+
+resource "aws_eks_access_entry" "user" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
+}
+resource "aws_eks_access_policy_association" "user_cluster" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+  access_scope {
+    type = "cluster"
+  }
+}
+resource "aws_eks_access_policy_association" "user_namespace" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+  access_scope {
+    type       = "namespace"
+    namespaces = ["default", "ancl11", "stma7"]
+  }
 }
 
