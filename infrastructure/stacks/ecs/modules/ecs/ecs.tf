@@ -131,7 +131,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 resource "aws_cloudwatch_log_group" "sample_app_log_group" {
-  name              = "/ecs/${var.service_prefix}-sample-app-ecs-fargate"
+  name              = "/ecs/${var.name_prefix}-sample-app-ecs-fargate"
   retention_in_days = 14
 }
 
