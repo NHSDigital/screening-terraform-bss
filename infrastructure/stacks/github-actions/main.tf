@@ -85,7 +85,8 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "eks:*",
           "elasticache:*",
           "ecr:CreateRepository",
-          "ecr:DescribeRepositories"
+          "ecr:DescribeRepositories",
+          "ecr:ListTagsForResource"
         ]
         Resource = "*"
       }
