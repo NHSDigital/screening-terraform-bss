@@ -192,6 +192,19 @@ resource "aws_security_group_rule" "alb_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
+# ------------------------------------------------------------------------------
+# ECS app Security Group Rules - INBOUND
+# ------------------------------------------------------------------------------
+resource "aws_security_group_rule" "ecs_alb_ingress" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  description              = "Allow inbound traffic from ALB"
+  security_group_id        = data.aws_security_group.ecs_sg.id
+  source_security_group_id = aws_security_group.alb_sg.id
+}
+
 data "aws_iam_policy_document" "assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
