@@ -1,0 +1,147 @@
+terraform {
+  backend "s3" {
+    bucket       = "nhse-bss-cicd-state"
+    key          = "terraform-state/ecs-task.tfstate"
+    region       = "eu-west-2"
+    encrypt      = true
+    use_lockfile = true
+  }
+}
+
+provider "aws" {
+  region = "eu-west-2"
+  default_tags {
+    tags = {
+      Environment = var.environment
+      Terraform   = "True"
+      Stack       = "ECS-TASK"
+    }
+  }
+}
+
+resource "aws_ecs_service" "ecs_service" {
+  name                = "${var.name_prefix}${var.name}"
+  cluster             = aws_ecs_cluster.ecs_cluster.arn
+  task_definition     = aws_ecs_task_definition.task_definition.arn
+  launch_type         = "FARGATE"
+  scheduling_strategy = "REPLICA"
+  desired_count       = 3
+
+  network_configuration {
+    subnets          = data.aws_subnets.private_subnets.ids
+    assign_public_ip = false
+    security_groups  = [aws_security_group.ecs_sg.id, aws_security_group.alb_sg.id]
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.target_group.arn
+    container_name   = "sample-app-container"
+    container_port   = var.container_port
+  }
+  depends_on = [aws_lb_listener.http_listener]
+}
+
+# task definitions
+
+resource "aws_ecs_task_definition" "task_definition" {
+  family                   = "texas-sample-app"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
+  container_definitions = jsonencode(
+    [
+      {
+        "name" : "sample-app-container",
+        "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
+        "essential" : true,
+        "environment" : [],
+        "secrets" : [
+          # {
+          #   "name" : "INSTANA_ENDPOINT_URL",
+          #   "valueFrom" : "${aws_secretsmanager_secret_version.sample_app.arn}:INSTANA_ENDPOINT_URL::"
+          # },
+          # {
+          #   "name" : "INSTANA_AGENT_KEY",
+          #   "valueFrom" : "${aws_secretsmanager_secret_version.sample_app.arn}:INSTANA_AGENT_KEY::"
+          # }
+        ],
+        "logConfiguration" : {
+          "logDriver" : "awslogs",
+          "options" : {
+            "awslogs-group" : aws_cloudwatch_log_group.sample_app_log_group.name,
+            "awslogs-region" : "eu-west-2",
+            "awslogs-stream-prefix" : "ecs"
+          }
+        },
+        "networkMode" : "awsvpc",
+        "portMappings" : [
+          {
+            "containerPort" : var.container_port,
+            "hostPort" : var.container_port,
+          }
+        ]
+        # "healthCheck" : {
+        #   "command" : ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"],
+        #   "interval" : 30,
+        #   "timeout" : 5,
+        #   "startPeriod" : 10,
+        #   "retries" : 3
+        # }
+      }
+    ]
+  )
+}
+
+resource "aws_cloudwatch_log_group" "sample_app_log_group" {
+  name              = "/ecs/${var.name_prefix}-sample-app-ecs-fargate"
+  retention_in_days = 14
+}
+
+
+# load balancer
+
+resource "aws_alb" "application_load_balancer" {
+  name = "sample-app-alb"
+
+  # behind Texas VPN so internal load balancer
+  internal = false
+
+  load_balancer_type = "application"
+  subnets            = data.aws_subnets.public_subnets.ids
+
+  security_groups = [aws_security_group.alb_sg.id]
+}
+
+resource "aws_lb_target_group" "target_group" {
+  name        = "sample-app-tg"
+  port        = var.container_port
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = data.aws_vpc.vpc.id
+  health_check {
+    path     = "/"
+    protocol = "HTTP"
+    matcher  = "200"
+    #port                = "traffic-port"
+    port                = 4000
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
+  }
+}
+
+#Defines an HTTP Listener for the ALB
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_alb.application_load_balancer.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.target_group.arn
+  }
+}

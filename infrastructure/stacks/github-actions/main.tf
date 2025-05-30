@@ -92,6 +92,7 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecr:GetRepositoryPolicy",
           "ecs:Describe*",
           "elasticloadbalancing:Describe*",
+          "elasticloadbalancing:SetSubnets",
           "ecs:DeregisterTaskDefinition",
           "ecs:RegisterTaskDefinition",
           "ecs:TagResource",
