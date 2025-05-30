@@ -19,10 +19,6 @@ provider "aws" {
   }
 }
 
-data "aws_ecs_cluster" "ecs_cluster" {
-  cluster_name = "${var.name_prefix}${var.cluster_name}"
-}
-
 resource "aws_ecs_service" "ecs_service" {
   name                = "${var.name_prefix}${var.name}"
   cluster             = data.aws_ecs_cluster.ecs_cluster.arn
