@@ -97,6 +97,7 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecs:RegisterTaskDefinition",
           "ecs:TagResource",
           "ecs:UpdateService",
+          "ecs:CreateService",
           "elasticloadbalancing:*"
         ]
         Resource = "*"
@@ -131,7 +132,7 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
           "iam:PassRole"
         ]
         Resource = [
-          "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-role",
+          "arn:aws:iam::${var.aws_account_id}:role/*",
           "arn:aws:iam::${var.aws_account_id}:role/sample-app-ecs-task-execution-role"
         ]
       }

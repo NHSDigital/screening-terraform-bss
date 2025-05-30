@@ -23,17 +23,17 @@ variable "container_port" {
 variable "name" {
   description = "The name"
   type        = string
-  default     = "test"
+  default     = "-test"
 }
 
 variable "cluster_name" {
   description = "cluster name"
-  type = string
-  default = "-ecs"
+  type        = string
+  default     = "-ecs"
 }
 
 variable "vpc_name" {
   description = "vpc name"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
