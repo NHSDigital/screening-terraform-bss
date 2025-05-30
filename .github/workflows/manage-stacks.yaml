@@ -64,8 +64,10 @@ jobs:
         run: terraform init
 
       - name: Check current workspace
-        working-directory: infrastructure/stacks/user-database
-        run: terraform workspace list && terraform workspace select ${{ github.event.inputs.workspace }}
+        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
+        run: |
+          terraform workspace new ${{ github.event.inputs.task_name }} || true
+          terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
