@@ -20,7 +20,6 @@ First, checkout this project locally and then follow these steps:
 7. Check the port of the container: `docker port <container-id>`
 8. Open the app running on the docker machine: `open http://$(docker-machine ip default):4001`
 
-
 ## Notes & Tips
 
 - If you make changes to your application, you will need to rebuild your image and restart your container.
@@ -30,7 +29,6 @@ First, checkout this project locally and then follow these steps:
 - List all local images: `docker images`
 - Remove an image: `docker rmi <image-id>`
 - Remove a container: `docker rm <container-id>`
-
 
 ## Further Reading
 
