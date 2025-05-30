@@ -25,8 +25,27 @@ data "aws_subnets" "public_subnets" {
   }
 }
 
+# Get private subnets
+data "aws_subnets" "private_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
+  filter {
+    name   = "tag:Environment"
+    values = [var.environment]
+  }
+  filter {
+    name   = "tag:kubernetes.io/role/internal-elb"
+    values = ["1"]
+  }
+}
+
 data "aws_iam_role" "ecs_task_execution_role" {
   name = "sample-app-ecs-task-execution-role"
 }
 
 
+data "aws_security_group" "ecs_sg" {
+  name = "sample-app-sg-ecs"
+}
