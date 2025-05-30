@@ -19,9 +19,13 @@ provider "aws" {
   }
 }
 
+data "aws_ecs_cluster" "ecs_cluster" {
+  cluster_name = "${var.name_prefix}${var.cluster_name}"
+}
+
 resource "aws_ecs_service" "ecs_service" {
   name                = "${var.name_prefix}${var.name}"
-  cluster             = aws_ecs_cluster.ecs_cluster.arn
+  cluster             = data.aws_ecs_cluster.ecs_cluster.arn
   task_definition     = aws_ecs_task_definition.task_definition.arn
   launch_type         = "FARGATE"
   scheduling_strategy = "REPLICA"
@@ -35,7 +39,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = "sample-app-container"
+    container_name   = "${var.name_prefix}${var.name}"
     container_port   = var.container_port
   }
   depends_on = [aws_lb_listener.http_listener]
@@ -44,7 +48,7 @@ resource "aws_ecs_service" "ecs_service" {
 # task definitions
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family                   = "texas-sample-app"
+  family                   = "${var.name_prefix}${var.name}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
@@ -54,7 +58,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode(
     [
       {
-        "name" : "sample-app-container",
+        "name" : "${var.name_prefix}${var.name}-container",
         "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
         "essential" : true,
         "environment" : [],
@@ -96,7 +100,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 resource "aws_cloudwatch_log_group" "sample_app_log_group" {
-  name              = "/ecs/${var.name_prefix}-sample-app-ecs-fargate"
+  name              = "/ecs/${var.name_prefix}${var.name}"
   retention_in_days = 14
 }
 
@@ -104,7 +108,7 @@ resource "aws_cloudwatch_log_group" "sample_app_log_group" {
 # load balancer
 
 resource "aws_alb" "application_load_balancer" {
-  name = "sample-app-alb"
+  name = "${var.name_prefix}${var.name}-alb"
 
   # behind Texas VPN so internal load balancer
   internal = false
@@ -116,7 +120,7 @@ resource "aws_alb" "application_load_balancer" {
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name        = "sample-app-tg"
+  name        = "${var.name_prefix}${var.name}-tg"
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"

@@ -25,3 +25,9 @@ variable "name" {
   type        = string
   default     = "test"
 }
+
+variable "cluster_name" {
+  description = "cluster name"
+  type = string
+  default = "-ecs"
+}

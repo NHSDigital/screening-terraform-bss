@@ -21,6 +21,7 @@ on:
           - elasticache
           - ecs
           - ecr
+          - ecs-task
       environment:
         description: 'Terraform environment to use'
         required: true
