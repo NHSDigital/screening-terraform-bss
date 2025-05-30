@@ -92,7 +92,7 @@ resource "aws_alb" "application_load_balancer" {
   name = "sample-app-alb"
 
   # behind Texas VPN so internal load balancer
-  internal = true
+  internal = false
 
   load_balancer_type = "application"
   subnets            = data.aws_subnets.private_subnets.ids
