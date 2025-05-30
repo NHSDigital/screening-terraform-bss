@@ -4,7 +4,6 @@ This repository gives you a quick introduction to getting docker running with No
 
 You can adapt the same approach to other languages but I chose Node because it's what I use most often.
 
-
 ## Setup
 
 First, checkout this project locally and then follow these steps:
@@ -20,7 +19,6 @@ First, checkout this project locally and then follow these steps:
 6. Check the logs for your container: `docker logs <container-id>`
 7. Check the port of the container: `docker port <container-id>`
 8. Open the app running on the docker machine: `open http://$(docker-machine ip default):4001`
-
 
 
 ## Notes & Tips
@@ -40,7 +38,7 @@ First, checkout this project locally and then follow these steps:
   - Check out the [Tutum CLI](https://github.com/tutumcloud/cli): `brew install tutum`
 - Check out this [Docker + Tutum hello world repo](https://github.com/tutumcloud/hello-world)
 
-
 ## Credits and License
 
 Put together by [Dana Woodman](mailto:dana@danawoodman.com) and released under the MIT license. Have fun!
+
