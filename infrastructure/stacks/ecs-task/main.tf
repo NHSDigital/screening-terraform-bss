@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode(
     [
       {
-        "name" : "${var.name_prefix}${var.name}-container",
+        "name" : "${var.name_prefix}${var.name}",
         "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
         "essential" : true,
         "environment" : [],
