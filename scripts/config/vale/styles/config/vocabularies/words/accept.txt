@@ -19,3 +19,6 @@ Trufflehog
 Github
 shortcode
 config
+tutum
+Tutum
+repo
