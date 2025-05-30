@@ -1,0 +1,17 @@
+{
+  "name": "texas-sample-app",
+  "version": "1.0.1",
+  "description": "NHS Texas project NodeJS sample app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "NHS Texas",
+  "dependencies": {
+    "@instana/collector": "^4.14.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "serve-favicon": "^2.5.0"
+  }
+}

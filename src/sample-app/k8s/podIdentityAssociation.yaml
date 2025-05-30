@@ -1,0 +1,6 @@
+iam:  
+  podIdentityAssociations: 
+  - namespace: REPLACE_WITH_NAMESPACE
+    serviceAccountName: REPLACE_WITH_SERVICE_ACCOUNT_NAME
+    roleARN: REPLACE_WITH_ROLE_ARN
+

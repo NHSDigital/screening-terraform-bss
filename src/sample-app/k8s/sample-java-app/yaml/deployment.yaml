@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: NAMESPACE_TO_BE_REPLACED
+  name: DEPLOYMENT_NAME_TO_BE_REPLACED
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: DEPLOYMENT_NAME_TO_BE_REPLACED
+  template:
+    metadata:
+      labels:
+        app: DEPLOYMENT_NAME_TO_BE_REPLACED
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: name
+                  operator: In
+                  values:
+                  - texas
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: CONTAINER_NAME_TO_BE_REPLACED
+          image: IMAGE_NAME_TO_BE_REPLACED
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 500m
+              memory: 2000Mi
