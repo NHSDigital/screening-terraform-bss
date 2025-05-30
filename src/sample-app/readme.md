@@ -14,8 +14,8 @@ First, checkout this project locally and then follow these steps:
 3. Build the Docker image: `docker build -t hello-world .`
 4. Run the image in a container: `docker run -d -p 4001:4000 hello-world`
 
->  - The `-d` flag says to run the container in the background (daemon mode).
->  - The `-p` flag maps port 4000 from the container to port 4001 on the docker machine.
+> - The `-d` flag says to run the container in the background (daemon mode).
+> - The `-p` flag maps port 4000 from the container to port 4001 on the docker machine.
 
 5. View your new container: `docker ps -a`
 6. Check the logs for your container: `docker logs <container-id>`
