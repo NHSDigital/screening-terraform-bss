@@ -13,8 +13,10 @@ First, checkout this project locally and then follow these steps:
 2. Start a "Quickstart Terminal" session (see the getting started guide).
 3. Build the Docker image: `docker build -t hello-world .`
 4. Run the image in a container: `docker run -d -p 4001:4000 hello-world`
-  - The `-d` flag says to run the container in the background (daemon mode).
-  - The `-p` flag maps port 4000 from the container to port 4001 on the docker machine.
+
+>  - The `-d` flag says to run the container in the background (daemon mode).
+>  - The `-p` flag maps port 4000 from the container to port 4001 on the docker machine.
+
 5. View your new container: `docker ps -a`
 6. Check the logs for your container: `docker logs <container-id>`
 7. Check the port of the container: `docker port <container-id>`
@@ -35,7 +37,7 @@ First, checkout this project locally and then follow these steps:
 ## Further Reading
 
 - Checkout [Tutum](http://tutum.co) for hosting private docker registries and managing your infrastructure.
-  - Check out the [Tutum CLI](https://github.com/tutumcloud/cli): `brew install tutum`
+- Check out the [Tutum CLI](https://github.com/tutumcloud/cli): `brew install tutum`
 - Check out this [Docker + Tutum hello world repo](https://github.com/tutumcloud/hello-world)
 
 ## Credits and License
