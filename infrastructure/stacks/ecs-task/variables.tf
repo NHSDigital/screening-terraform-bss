@@ -31,3 +31,9 @@ variable "cluster_name" {
   type = string
   default = "-ecs"
 }
+
+variable "vpc_name" {
+  description = "vpc name"
+  type = string
+  default = ""
+}

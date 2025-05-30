@@ -149,3 +149,49 @@ resource "aws_lb_listener" "http_listener" {
     target_group_arn = aws_lb_target_group.target_group.arn
   }
 }
+
+# ------------------------------------------------------------------------------
+# Security Group for alb
+# ------------------------------------------------------------------------------
+resource "aws_security_group" "alb_sg" {
+  vpc_id                 = data.aws_vpc.vpc.id
+  name                   = "${var.name_prefix}${var.name}"
+  description            = "Security group for ${var.name_prefix}${var.name} ALB"
+  revoke_rules_on_delete = true
+}
+
+# ------------------------------------------------------------------------------
+# Alb Security Group Rules - INBOUND
+# ------------------------------------------------------------------------------
+# resource "aws_security_group_rule" "alb_http_ingress" {
+#   type                     = "ingress"
+#   from_port                = 80
+#   to_port                  = 80
+#   protocol                 = "TCP"
+#   description              = "Allow http inbound traffic from VPN"
+#   source_security_group_id = data.terraform_remote_state.security-groups.outputs.vpn_main_sg_id
+#   security_group_id        = aws_security_group.alb_sg.id
+# }
+
+# resource "aws_security_group_rule" "alb_https_ingress" {
+#   type                     = "ingress"
+#   from_port                = 443
+#   to_port                  = 443
+#   protocol                 = "TCP"
+#   description              = "Allow https inbound traffic from VPN"
+#   source_security_group_id = data.terraform_remote_state.security-groups.outputs.vpn_main_sg_id
+#   security_group_id        = aws_security_group.alb_sg.id
+# }
+
+# ------------------------------------------------------------------------------
+# Alb Security Group Rules - OUTBOUND
+# ------------------------------------------------------------------------------
+resource "aws_security_group_rule" "alb_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  description       = "Allow outbound traffic from ${var.name_prefix}${var.name} alb"
+  security_group_id = aws_security_group.alb_sg.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
