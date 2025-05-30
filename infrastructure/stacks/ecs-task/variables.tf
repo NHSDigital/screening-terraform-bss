@@ -20,8 +20,8 @@ variable "container_port" {
   default     = 4000
 }
 
-variable "name" {
-  description = "The name"
+variable "task_name" {
+  description = "The task name"
   type        = string
   default     = "-test"
 }

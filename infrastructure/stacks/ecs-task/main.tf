@@ -20,7 +20,7 @@ provider "aws" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  name                = "${var.name_prefix}${var.name}"
+  name                = "${var.name_prefix}${var.task_name}"
   cluster             = data.aws_ecs_cluster.ecs_cluster.arn
   task_definition     = aws_ecs_task_definition.task_definition.arn
   launch_type         = "FARGATE"
@@ -35,7 +35,7 @@ resource "aws_ecs_service" "ecs_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.target_group.arn
-    container_name   = "${var.name_prefix}${var.name}"
+    container_name   = "${var.name_prefix}${var.task_name}"
     container_port   = var.container_port
   }
   depends_on = [aws_lb_listener.http_listener]
@@ -44,7 +44,7 @@ resource "aws_ecs_service" "ecs_service" {
 # task definitions
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family                   = "${var.name_prefix}${var.name}"
+  family                   = "${var.name_prefix}${var.task_name}"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode(
     [
       {
-        "name" : "${var.name_prefix}${var.name}",
+        "name" : "${var.name_prefix}${var.task_name}",
         "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
         "essential" : true,
         "environment" : [],
@@ -96,7 +96,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 resource "aws_cloudwatch_log_group" "sample_app_log_group" {
-  name              = "/ecs/${var.name_prefix}${var.name}"
+  name              = "/ecs/${var.name_prefix}${var.task_name}"
   retention_in_days = 14
 }
 
@@ -104,7 +104,7 @@ resource "aws_cloudwatch_log_group" "sample_app_log_group" {
 # load balancer
 
 resource "aws_alb" "application_load_balancer" {
-  name = "${var.name_prefix}${var.name}-alb"
+  name = "${var.name_prefix}${var.task_name}"
 
   # behind Texas VPN so internal load balancer
   internal = false
@@ -116,7 +116,7 @@ resource "aws_alb" "application_load_balancer" {
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name        = "${var.name_prefix}${var.name}-tg"
+  name        = "${var.name_prefix}${var.task_name}"
   port        = var.container_port
   protocol    = "HTTP"
   target_type = "ip"
@@ -151,8 +151,8 @@ resource "aws_lb_listener" "http_listener" {
 # ------------------------------------------------------------------------------
 resource "aws_security_group" "alb_sg" {
   vpc_id                 = data.aws_vpc.vpc.id
-  name                   = "${var.name_prefix}${var.name}"
-  description            = "Security group for ${var.name_prefix}${var.name} ALB"
+  name                   = "${var.name_prefix}${var.task_name}"
+  description            = "Security group for ${var.name_prefix}${var.task_name} ALB"
   revoke_rules_on_delete = true
 }
 
@@ -187,9 +187,22 @@ resource "aws_security_group_rule" "alb_egress" {
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
-  description       = "Allow outbound traffic from ${var.name_prefix}${var.name} alb"
+  description       = "Allow outbound traffic from ${var.name_prefix}${var.task_name} alb"
   security_group_id = aws_security_group.alb_sg.id
   cidr_blocks       = ["0.0.0.0/0"]
+}
+
+# ------------------------------------------------------------------------------
+# ECS app Security Group Rules - INBOUND
+# ------------------------------------------------------------------------------
+resource "aws_security_group_rule" "ecs_alb_ingress" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  description              = "Allow inbound traffic from ALB"
+  security_group_id        = data.aws_security_group.ecs_sg.id
+  source_security_group_id = aws_security_group.alb_sg.id
 }
 
 data "aws_iam_policy_document" "assume_role_policy" {
@@ -205,7 +218,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
 # Task role is the role assumed by the running ECS task
 resource "aws_iam_role" "ecs_task_role" {
-  name               = "${var.name_prefix}${var.name}"
+  name               = "${var.name_prefix}${var.task_name}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
