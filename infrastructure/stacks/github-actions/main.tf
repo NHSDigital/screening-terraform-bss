@@ -96,7 +96,8 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecs:DeregisterTaskDefinition",
           "ecs:RegisterTaskDefinition",
           "ecs:TagResource",
-          "ecs:UpdateService"
+          "ecs:UpdateService",
+          "elasticloadbalancing:*"
         ]
         Resource = "*"
       }
@@ -313,9 +314,7 @@ resource "aws_iam_policy" "github_actions_logs" {
       {
         Effect = "Allow"
         Action = [
-          "logs:Describe*",
-          "logs:List*",
-          "logs:DeleteLogGroup"
+          "logs:*"
         ]
         Resource = "*"
       }
