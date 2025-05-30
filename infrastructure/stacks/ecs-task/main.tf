@@ -26,6 +26,7 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type         = "FARGATE"
   scheduling_strategy = "REPLICA"
   desired_count       = 3
+  enable_execute_command = true
 
   network_configuration {
     subnets          = data.aws_subnets.private_subnets.ids
