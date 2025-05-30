@@ -20,10 +20,10 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 }
 
 # Task role is the role assumed by the running ECS task
-resource "aws_iam_role" "ecs_task_role" {
-  name               = "sample-app-ecs-task-role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
-}
+# resource "aws_iam_role" "ecs_task_role" {
+#   name               = "sample-app-ecs-task-role"
+#   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+# }
 
 
 # Allow access to Instana secrets for Fargate monitoring
