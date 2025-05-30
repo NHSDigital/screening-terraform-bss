@@ -24,3 +24,9 @@ data "aws_subnets" "public_subnets" {
     values = ["1"]
   }
 }
+
+data "aws_iam_role" "ecs_task_execution_role" {
+  name = "sample-app-ecs-task-execution-role"
+}
+
+

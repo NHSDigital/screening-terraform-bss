@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   network_mode             = "awsvpc"
   cpu                      = "256"
   memory                   = "512"
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode(
     [
@@ -191,3 +191,22 @@ resource "aws_security_group_rule" "alb_egress" {
   security_group_id = aws_security_group.alb_sg.id
   cidr_blocks       = ["0.0.0.0/0"]
 }
+
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+# Task role is the role assumed by the running ECS task
+resource "aws_iam_role" "ecs_task_role" {
+  name               = "${var.name_prefix}${var.name}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+}
+
+
