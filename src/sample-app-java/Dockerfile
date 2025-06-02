@@ -9,7 +9,7 @@ RUN mvn clean package -DskipTests -f ./src/sample-app-java/pom.xml
 
 
 
-FROM sample-app-build:${VERSION} AS build
+# FROM sample-app-build:${VERSION} AS build
 
 FROM openjdk:11-jre-slim
 
