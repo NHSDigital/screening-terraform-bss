@@ -1,0 +1,47 @@
+name: Build and push GH runner image
+on:
+  workflow_dispatch:
+    inputs:
+      runner-image-tag:
+        description: The tag of the Github runner image
+        type: choice
+        options:
+          - cicd
+        default: cicd
+
+env:
+  AWS_REGION : eu-west-2
+  RUNNER_IMAGE_TAG: ${{ inputs.runner-image-tag == '' && 'cicd' || inputs.runner-image-tag }}
+
+# permission can be added at job level or workflow level
+permissions:
+  id-token: write   # This is required for OIDC
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: live-mgmt
+    env:
+      ECR_REPO: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com
+      IMAGE_NAME: texas-github-runner
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - name: Build docker image
+        run: |
+          cd docker/github-actions-runner
+          docker build -t ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.RUNNER_IMAGE_TAG }} .
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/texas-github-role
+          role-session-name: github-deploy-env
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ECR_REPO }}
+      - name: Push docker image
+        run: |
+          docker push ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.RUNNER_IMAGE_TAG }}
