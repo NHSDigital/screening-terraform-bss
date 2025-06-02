@@ -1,6 +1,6 @@
 {
   "name": "texas-sample-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NHS Texas project NodeJS sample app",
   "main": "server.js",
   "scripts": {
