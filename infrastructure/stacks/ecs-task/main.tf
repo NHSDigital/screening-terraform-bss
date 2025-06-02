@@ -127,7 +127,7 @@ resource "aws_lb_target_group" "target_group" {
     protocol = "HTTP"
     matcher  = "200"
     #port                = "traffic-port"
-    port                = 4000
+    port                = 8443
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 10
