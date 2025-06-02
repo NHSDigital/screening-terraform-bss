@@ -56,8 +56,17 @@ jobs:
       - name: Check current workspace
         working-directory: infrastructure/stacks/ecs-task
         run: |
-          terraform workspace new ${{ github.event.inputs.task_name }} || true
-          terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
+          if terraform workspace list | grep -qE "^\s*${{steps.extract.outputs.branch_name}}\$"; then
+            echo "Workspace ${{steps.extract.outputs.branch_name}} already exists."
+          else
+            echo "Creating workspace '${{steps.extract.outputs.branch_name}}'..."
+            terraform workspace new "${{steps.extract.outputs.branch_name}}"
+          fi
+          terraform workspace select "${{steps.extract.outputs.branch_name}}"
+          # LIST=$(terraform workspace list)
+          # if terraform workspace list | grep -qE
+          # terraform workspace new ${{ github.event.inputs.task_name }} || true
+          # terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/ecs-task
@@ -76,6 +85,6 @@ jobs:
           TF_ACTION: ${{ github.event.inputs.action }}
         run: |
           if ["$TF_ACTION" = "destroy"];then
-            terraform workspace delete -force ${{ github.event.inputs.task_name }}
+            terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
           fi
 
