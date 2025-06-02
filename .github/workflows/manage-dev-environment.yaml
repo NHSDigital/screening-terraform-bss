@@ -57,5 +57,5 @@ jobs:
           TF_VAR_task_name: ${{ github.event.inputs.task_name }}
         run: |
           echo "$TF_VAR_task_name"
-          terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/$TF_VAR_ENVIRONMENT/main.tfvars"
+          terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
 
