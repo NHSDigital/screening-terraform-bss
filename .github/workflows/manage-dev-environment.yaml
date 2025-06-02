@@ -45,8 +45,11 @@ jobs:
         id: extract
         run: |
           BRANCH="${GITHUB_REF##*/}" # Get full ref name
+          echo "$BRANCH"
           SHORTCODE="${BRANCH#feature/}" # remove the `feature/` from the begining
+          echo $SHORTCODE
           TICKET="${SHORTCODE%%-*}"
+          echo $TICKET
           echo "ticket_number=$TICKET" >> "$GITHUB_OUTPUT"
           echo "shortcode"="$SHORTCODE" >> "$GITHUB_OUTPUT"
 
