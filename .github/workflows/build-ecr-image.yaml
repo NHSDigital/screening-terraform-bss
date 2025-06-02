@@ -1,18 +1,18 @@
 name: Build and push GH runner image
 on:
   workflow_dispatch:
-    inputs:
-      runner-image-tag:
-        description: The tag of the Github runner image
-        type: choice
-        options:
-          - cicd
-        default: cicd
+    # inputs:
+    #   runner-image-tag:
+    #     description: The tag of the Github runner image
+    #     type: choice
+    #     options:
+    #       - cicd
+    #     default: cicd
 
 env:
   AWS_REGION : eu-west-2
-  RUNNER_IMAGE_TAG: ${{ inputs.runner-image-tag == '' && 'cicd' || inputs.runner-image-tag }}
-
+ # RUNNER_IMAGE_TAG: ${{ inputs.runner-image-tag == '' && 'cicd' || inputs.runner-image-tag }}
+  RUNNER_IMAGE_TAG: latest
 # permission can be added at job level or workflow level
 permissions:
   id-token: write   # This is required for OIDC
@@ -21,10 +21,10 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    environment: live-mgmt
+    #environment: live-mgmt
     env:
-      ECR_REPO: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.eu-west-2.amazonaws.com
-      IMAGE_NAME: texas-github-runner
+      ECR_REPO: ${{ secrets.DEV_AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
+      IMAGE_NAME: nhse-bss-euwest2-cicd
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/texas-github-role
+          role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
           role-session-name: github-deploy-env
           aws-region: ${{ env.AWS_REGION }}
       - name: Login to ECR
