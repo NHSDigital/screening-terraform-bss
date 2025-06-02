@@ -50,7 +50,6 @@ jobs:
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/ecs-task
         env:
-          TF_VAR_ENVIRONMENT: ${{ github.event.inputs.environment }}
           TF_ACTION: ${{ github.event.inputs.action }}
           TF_STACK: ecs-task
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
@@ -58,4 +57,13 @@ jobs:
         run: |
           echo "$TF_VAR_task_name"
           terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
+
+      - name: Cleanup
+        working-directory: infrastructure/stacks/ecs-task
+        env:
+          TF_ACTION: ${{ github.event.inputs.action }}
+        run: |
+          if $TF_ACTION=="destroy",then
+            terraform workspace destroy ${{ github.event.inputs.task_name }}
+          fi
 
