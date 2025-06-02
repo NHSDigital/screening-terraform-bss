@@ -27,7 +27,7 @@ jobs:
 
       - name: Build docker image
         working-directory: src/sample-app
-        run: docker build -t ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.RUNNER_IMAGE_TAG }} .
+        run: docker build -t ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
@@ -42,4 +42,4 @@ jobs:
 
       - name: Push docker image
         run: |
-          docker push ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.RUNNER_IMAGE_TAG }}
+          docker push ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
