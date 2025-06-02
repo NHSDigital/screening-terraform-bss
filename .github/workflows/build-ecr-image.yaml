@@ -1,18 +1,15 @@
 name: Build and push ECR image
 on:
   workflow_dispatch:
-    # inputs:
-    #   runner-image-tag:
-    #     description: The tag of the Github runner image
-    #     type: choice
-    #     options:
-    #       - cicd
-    #     default: cicd
+    inputs:
+      image-tag:
+        description: The tag of the image
+        type: string
+        default: "latest"
 
 env:
   AWS_REGION : eu-west-2
- # RUNNER_IMAGE_TAG: ${{ inputs.runner-image-tag == '' && 'cicd' || inputs.runner-image-tag }}
-  RUNNER_IMAGE_TAG: latest
+  IMAGE_TAG: ${{ inputs.image-tag }}
 permissions:
   id-token: write   # This is required for OIDC
   contents: read    # This is required for actions/checkout
