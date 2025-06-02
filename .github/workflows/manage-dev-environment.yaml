@@ -84,7 +84,7 @@ jobs:
         env:
           TF_ACTION: ${{ github.event.inputs.action }}
         run: |
-          if ["$TF_ACTION" = "destroy"];then
+          if ["$TF_ACTION" == "destroy"];then
             terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
           fi
 
