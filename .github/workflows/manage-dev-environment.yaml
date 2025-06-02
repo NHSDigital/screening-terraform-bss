@@ -10,10 +10,6 @@ on:
         options:
           - apply
           - destroy
-      task_name:
-        description: 'Name of the ECS task (only for ecs-task stack)'
-        required: false
-        type: string
 
 permissions:
   id-token: write
@@ -84,7 +80,7 @@ jobs:
         env:
           TF_ACTION: ${{ github.event.inputs.action }}
         run: |
-          if ["$TF_ACTION" == "destroy"];then
+          if [["$TF_ACTION" == "destroy"]];then
             terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
           fi
 
