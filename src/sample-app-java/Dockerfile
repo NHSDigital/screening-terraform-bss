@@ -24,6 +24,6 @@ RUN chmod 755 /app
  
 USER admin
  
-EXPOSE 8443
+EXPOSE 8080
 ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
 

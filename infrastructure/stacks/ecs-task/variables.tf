@@ -17,7 +17,7 @@ variable "environment" {
 variable "container_port" {
   description = "The port for the container"
   type        = number
-  default     = 8443
+  default     = 8080
 }
 
 variable "task_name" {
