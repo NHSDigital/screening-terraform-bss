@@ -54,6 +54,7 @@ jobs:
         run: |
           echo "Ticket: ${{ steps.extract.outputs.ticket_number}}"
           echo "Shortcode: ${{ steps.extract.outputs.shortcode}}"
+          echo "correct syntax should be ${{ steps.extract.outputs.ticket_bumber}}-${{steps.extract.outputs.shortcode}}"
 
       - name: Check current workspace
         working-directory: infrastructure/stacks/ecs-task
