@@ -15,7 +15,7 @@ FROM openjdk:11-jre-slim
  
 WORKDIR /app
  
-COPY --from=builder /build/sample-apps/sample-java-app/target/sample-deployment-0.0.1-SNAPSHOT.jar /usr/local/lib/app.jar
+COPY --from=builder /build/target/sample-deployment-0.0.1-SNAPSHOT.jar /usr/local/lib/app.jar
  
 RUN groupadd -g 999 adminGroup && \
     useradd -r -u 999 -g adminGroup admin
