@@ -77,10 +77,8 @@ jobs:
 
       - name: Cleanup
         working-directory: infrastructure/stacks/ecs-task
-        env:
-          TF_ACTION: ${{ github.event.inputs.action }}
         run: |
-          if [["${{ github.event.inputs.action }}" == "destroy"]];then
+          if ["${{ github.event.inputs.action }}" == "destroy"];then
             terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
           fi
 
