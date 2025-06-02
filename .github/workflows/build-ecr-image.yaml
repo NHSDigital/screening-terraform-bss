@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build docker image
-        working-directory: src/sample-app
+        working-directory: src/sample-app-java
         run: docker build -t ${{ env.ECR_REPO }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: configure aws credentials
