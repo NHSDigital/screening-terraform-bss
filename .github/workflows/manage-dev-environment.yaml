@@ -46,18 +46,12 @@ jobs:
         run: |
           BRANCH="${GITHUB_REF##*/}" # Get full ref name
           echo "$BRANCH"
-          PART="${BRANCH#feature/}" # remove the `feature/` from the begining
-          SHORTCODE="${PART%%-*}"
-          TICKET="${PART#*-}"
-
-          echo "ticket_number=$TICKET" >> "$GITHUB_OUTPUT"
-          echo "shortcode"="$SHORTCODE" >> "$GITHUB_OUTPUT"
+          BRANCH_NAME="${BRANCH#feature/}" # remove the `feature/` from the begining
+          echo "branch_name"="$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Check values are correct
         run: |
-          echo "Ticket: ${{ steps.extract.outputs.ticket_number}}"
-          echo "Shortcode: ${{ steps.extract.outputs.shortcode}}"
-          echo "correct syntax should be ${{ steps.extract.outputs.ticket_bumber}}-${{steps.extract.outputs.shortcode}}"
+          echo "branch_name: ${{ steps.extract.outputs.branch_name}}"
 
       - name: Check current workspace
         working-directory: infrastructure/stacks/ecs-task
