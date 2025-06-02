@@ -99,7 +99,8 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecs:TagResource",
           "ecs:UpdateService",
           "ecs:CreateService",
-          "elasticloadbalancing:*"
+          "elasticloadbalancing:*",
+          "fis:*"
         ]
         Resource = "*"
       }
