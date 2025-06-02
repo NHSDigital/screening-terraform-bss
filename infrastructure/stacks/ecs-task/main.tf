@@ -123,7 +123,7 @@ resource "aws_lb_target_group" "target_group" {
   target_type = "ip"
   vpc_id      = data.aws_vpc.vpc.id
   health_check {
-    path     = "/"
+    path     = "/MHSEndpoint"
     protocol = "HTTP"
     matcher  = "200"
     #port                = "traffic-port"
