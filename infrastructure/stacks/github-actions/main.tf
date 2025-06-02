@@ -90,6 +90,7 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecr:SetRepositoryPolicy",
           "ecr:TagResource",
           "ecr:GetRepositoryPolicy",
+          "ecr:GetAuthorizationToken",
           "ecs:Describe*",
           "ecs:Delete*",
           "elasticloadbalancing:Describe*",
