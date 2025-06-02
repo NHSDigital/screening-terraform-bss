@@ -20,12 +20,12 @@ provider "aws" {
 }
 
 resource "aws_ecs_service" "ecs_service" {
-  name                = "${var.name_prefix}${var.task_name}"
-  cluster             = data.aws_ecs_cluster.ecs_cluster.arn
-  task_definition     = aws_ecs_task_definition.task_definition.arn
-  launch_type         = "FARGATE"
-  scheduling_strategy = "REPLICA"
-  desired_count       = 3
+  name                   = "${var.name_prefix}${var.task_name}"
+  cluster                = data.aws_ecs_cluster.ecs_cluster.arn
+  task_definition        = aws_ecs_task_definition.task_definition.arn
+  launch_type            = "FARGATE"
+  scheduling_strategy    = "REPLICA"
+  desired_count          = 3
   enable_execute_command = true
 
   network_configuration {

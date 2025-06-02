@@ -20,8 +20,8 @@ provider "aws" {
 }
 
 module "ecs" {
-    source = "./modules/ecs"
-    aws_account_id = var.aws_account_id
-    name_prefix = var.name_prefix
-    environment = var.environment
+  source         = "./modules/ecs"
+  aws_account_id = var.aws_account_id
+  name_prefix    = var.name_prefix
+  environment    = var.environment
 }

@@ -11,7 +11,7 @@ variable "aws_account_id" {
 }
 
 variable "name" {
-  default = "-ecs"
+  default     = "-ecs"
   description = "the unique name of the resource"
   type        = string
 }
