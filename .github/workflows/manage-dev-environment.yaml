@@ -1,4 +1,4 @@
-name: Manage Stacks
+name: Manage Dev Environment
 
 on:
   workflow_dispatch:
@@ -10,28 +10,6 @@ on:
         options:
           - apply
           - destroy
-      stack:
-        description: 'Which stack to manage'
-        required: true
-        type: choice
-        options:
-          - vpc
-          - eks
-          - rds
-          - elasticache
-          - ecs
-          - ecr
-          - ecs-task
-      environment:
-        description: 'Terraform environment to use'
-        required: true
-        type: choice
-        options:
-          - cicd
-          - nft
-          - uat
-          - prod
-          # Add new environments here
       task_name:
         description: 'Name of the ECS task (only for ecs-task stack)'
         required: false
@@ -60,29 +38,24 @@ jobs:
           aws-region: eu-west-2
 
       - name: Terraform Init
-        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
+        working-directory: infrastructure/stacks/ecs-task
         run: terraform init
 
       - name: Check current workspace
-        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
+        working-directory: infrastructure/stacks/ecs-task
         run: |
           terraform workspace new ${{ github.event.inputs.task_name }} || true
           terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
 
       - name: Terraform ${{ github.event.inputs.action }}
-        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
+        working-directory: infrastructure/stacks/ecs-task
         env:
           TF_VAR_ENVIRONMENT: ${{ github.event.inputs.environment }}
           TF_ACTION: ${{ github.event.inputs.action }}
-          TF_STACK: ${{ github.event.inputs.stack }}
+          TF_STACK: ecs-task
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
           TF_VAR_task_name: ${{ github.event.inputs.task_name }}
         run: |
           echo "$TF_VAR_task_name"
           terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/$TF_VAR_ENVIRONMENT/main.tfvars"
-
-      - name: Cleanup
-        if: always()
-        working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
-        run: terraform workspace select default
 
