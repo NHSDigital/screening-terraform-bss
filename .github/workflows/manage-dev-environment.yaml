@@ -41,6 +41,20 @@ jobs:
         working-directory: infrastructure/stacks/ecs-task
         run: terraform init
 
+      - name: extract name from branch
+        id: extract
+        run: |
+          BRANCH="${GITHUB_REF##*/}" # Get full ref name
+          PART="${BRANCH#feature/}" # remove the `feature/` from the begining
+          TICKET="${PART%%-*}"
+          echo "ticket_number=$TICKET" >> "$GITHUB_OUTPUT"
+          echo "shortcode"="$SHORTCODE" >> "$GITHUB_OUTPUT"
+
+      - name: Check values are correct
+        run: |
+          echo "Ticket: ${{ steps.extract.outputs.ticket_number}}"
+          echo "Shortcode: ${{ steps.extract.outputs.shortcode}}"
+
       - name: Check current workspace
         working-directory: infrastructure/stacks/ecs-task
         run: |
