@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     [
       {
         "name" : "${var.name_prefix}${var.task_name}",
-        "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
+        "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:java"
         "essential" : true,
         "environment" : [],
         "secrets" : [
