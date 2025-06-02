@@ -44,7 +44,7 @@ jobs:
       - name: extract name from branch
         id: extract
         run: |
-          BRANCH="${GITHUB_REF##*/}" # Get full ref name
+          BRANCH="${GITHUB_REF}" # Get full ref name
           echo "$BRANCH"
           SHORTCODE="${BRANCH#feature/}" # remove the `feature/` from the begining
           echo $SHORTCODE
