@@ -50,8 +50,8 @@
             <artifactId>xalan</artifactId>
             <version>2.7.2</version>
             <!-- Added this exclusion because without it, after moving from Java 8
-                to Java 10, Eclipse was reporting the error: "The package org.w3c.dom is
-                accessible from more than one module: <unnamed>, java.xml". See:
+to Java 10, Eclipse was reporting the error: "The package org.w3c.dom is
+accessible from more than one module: <unnamed>, java.xml". See:
             https://stackoverflow.com/questions/57286825/the-package-org-w3c-dom-is-accessible-from-more-than-one-module-unnamed-java/61457564#61457564 -->
             <exclusions>
                 <exclusion>
