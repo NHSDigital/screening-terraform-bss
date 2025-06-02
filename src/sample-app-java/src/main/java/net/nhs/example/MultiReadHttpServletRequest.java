@@ -23,54 +23,54 @@ import org.springframework.web.filter.HiddenHttpMethodFilter;
  * @see http://blog.meandmymac.de/pages/spring-boot-eats-the-body-of-post-requests
  */
 class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
-   private final ByteArrayOutputStream cachedBytes;
+private final ByteArrayOutputStream cachedBytes;
 
-   MultiReadHttpServletRequest(HttpServletRequest request) {
-      super(request);
-      try {
-         // Cache the inputstream in order to read it multiple times.
-         cachedBytes = new ByteArrayOutputStream();
-         IOUtils.copy(super.getInputStream(), cachedBytes);
-      } catch (IOException e) {
-         throw new UncheckedIOException(e);
-      }
-   }
+MultiReadHttpServletRequest(HttpServletRequest request) {
+super(request);
+try {
+// Cache the inputstream in order to read it multiple times.
+cachedBytes = new ByteArrayOutputStream();
+IOUtils.copy(super.getInputStream(), cachedBytes);
+} catch (IOException e) {
+throw new UncheckedIOException(e);
+}
+}
 
-   @Override
-   public ServletInputStream getInputStream() throws IOException {
-      return new CachedServletInputStream(cachedBytes.toByteArray());
-   }
+@Override
+public ServletInputStream getInputStream() throws IOException {
+return new CachedServletInputStream(cachedBytes.toByteArray());
+}
 
-   @Override
-   public BufferedReader getReader() throws IOException {
-      return new BufferedReader(new InputStreamReader(getInputStream()));
-   }
+@Override
+public BufferedReader getReader() throws IOException {
+return new BufferedReader(new InputStreamReader(getInputStream()));
+}
 
-   private class CachedServletInputStream extends ServletInputStream {
-      private final ByteArrayInputStream input;
+private class CachedServletInputStream extends ServletInputStream {
+private final ByteArrayInputStream input;
 
-      public CachedServletInputStream(byte[] bytes) {
-         input = new ByteArrayInputStream(bytes);
-      }
+public CachedServletInputStream(byte[] bytes) {
+input = new ByteArrayInputStream(bytes);
+}
 
-      @Override
-      public int read() throws IOException {
-         return input.read();
-      }
+@Override
+public int read() throws IOException {
+return input.read();
+}
 
-      @Override
-      public boolean isFinished() {
-         return input.available() == 0;
-      }
+@Override
+public boolean isFinished() {
+return input.available() == 0;
+}
 
-      @Override
-      public boolean isReady() {
-         return true;
-      }
+@Override
+public boolean isReady() {
+return true;
+}
 
-      @Override
-      public void setReadListener(ReadListener listener) {
-         throw new UnsupportedOperationException();
-      }
-   }
+@Override
+public void setReadListener(ReadListener listener) {
+throw new UnsupportedOperationException();
+}
+}
 }

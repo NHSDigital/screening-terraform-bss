@@ -28,17 +28,16 @@ import org.w3c.dom.NodeList;
 @RestController
 @RequestMapping("/MHSEndpoint")
 public class MhsController {
-   private static final Logger LOG = LoggerFactory.getLogger(MhsController.class);
-
-      @GetMapping
-      public void process(HttpServletRequest request, HttpServletResponse response) throws IOException {
-         try {
-            LOG.info("Recieved request");
-            response.getWriter().write("Hello World");
-            response.getWriter().flush();
-         } catch (Exception e) {
-            LOG.error("Request unprocessable by MHSEndpoint", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-         }
-      }
+private static final Logger LOG = LoggerFactory.getLogger(MhsController.class);
+@GetMapping
+public void process(HttpServletRequest request, HttpServletResponse response) throws IOException {
+try {
+LOG.info("Recieved request");
+response.getWriter().write("Hello World");
+response.getWriter().flush();
+} catch (Exception e) {
+LOG.error("Request unprocessable by MHSEndpoint", e);
+response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+}
+}
 }
