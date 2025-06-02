@@ -90,6 +90,14 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ecr:SetRepositoryPolicy",
           "ecr:TagResource",
           "ecr:GetRepositoryPolicy",
+          "ecr:GetAuthorizationToken",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:PutImage",
           "ecs:Describe*",
           "ecs:Delete*",
           "elasticloadbalancing:Describe*",
@@ -130,7 +138,8 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
       {
         Effect = "Allow"
         Action = [
-          "iam:PassRole"
+          "iam:PassRole",
+          "iam:AttachRolePolicy",
         ]
         Resource = [
           "arn:aws:iam::${var.aws_account_id}:role/*",
