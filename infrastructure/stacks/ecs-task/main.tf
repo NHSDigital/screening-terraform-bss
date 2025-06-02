@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "512"
-  memory                   = "1024"
+  memory                   = ""
   execution_role_arn       = data.aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode(
@@ -58,7 +58,14 @@ resource "aws_ecs_task_definition" "task_definition" {
         "name" : "${var.name_prefix}${var.task_name}",
         "image" : "${var.aws_account_id}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd:latest"
         "essential" : true,
-        "environment" : [],
+        "environment" : [
+
+          {
+            "name" : "TEST",
+            "value" : "12345"
+          },
+          
+        ],
         "secrets" : [
           # {
           #   "name" : "INSTANA_ENDPOINT_URL",
