@@ -124,7 +124,7 @@ resource "aws_iam_policy" "github_actions_ecs_iam" {
           "iam:TagPolicy"
         ]
         Resource = [
-          "arn:aws:iam::${var.aws_account_id}:policy/sample-app-policy"
+          "arn:aws:iam::${var.aws_account_id}:policy/nhse-bss-euwes2-cicd*"
         ]
       },
       {
