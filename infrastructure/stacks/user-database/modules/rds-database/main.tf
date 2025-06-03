@@ -16,7 +16,7 @@ locals {
 }
 
 data "aws_db_instance" "rds" {
-  db_instance_identifier = "${var.name_prefix}${var.rds_name}"
+  db_instance_identifier = "${var.name_prefix}-${var.rds_name}"
 }
 
 locals {
