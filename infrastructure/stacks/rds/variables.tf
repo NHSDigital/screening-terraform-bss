@@ -1,7 +1,3 @@
-variable "environment" {
-  description = "The name of the Environment this is deployed into, for example CICD, NFT, UAT or PROD"
-}
-
 variable "name" {
   description = "The name of the resource"
   type        = string
@@ -18,3 +14,24 @@ variable "ingress_cidr" {
   type        = list(string)
 }
 
+variable "name_prefix" {
+  description = "The account, environment etc"
+  type        = string
+}
+
+variable "aws_account_id" {
+  sensitive   = true
+  description = "The AWS account ID"
+  type        = string
+}
+
+variable "environment" {
+  description = "The name of the Environment this is deployed into, for example CICD, NFT, UAT or PROD"
+  type        = string
+}
+
+variable "vpc_name" {
+  description = "vpc name"
+  type        = string
+  default     = ""
+}
