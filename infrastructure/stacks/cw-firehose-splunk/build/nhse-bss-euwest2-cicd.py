@@ -87,7 +87,7 @@ def transformLogEvent(log_event, logGroup, logStream):
     str: The transformed log event.
     """
     response=''
-    if 'test':
+    if 'false':
         if log_event['message'].find('START RequestId') <0 and log_event['message'].find('END RequestId') <0 and log_event['message'].find('REPORT RequestId') <0:
             if logGroup:
                 logGroup = 'cwlogname:' + logGroup +' '
