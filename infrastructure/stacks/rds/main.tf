@@ -28,5 +28,7 @@ module "rds" {
   publicly_accessible = true
   ingress_cidr        = var.ingress_cidr
   skip_final_snapshot = true
+  name_prefix         = var.name_prefix
+  aws_account_id      = var.aws_account_id
 }
 
