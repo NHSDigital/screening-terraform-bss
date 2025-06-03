@@ -65,7 +65,7 @@ jobs:
         env:
           TF_ACTION: ${{ github.event.inputs.action }}
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
-          TF_VAR_task_name: ${{ github.event.inputs.task_name }}
+          TF_VAR_task_name: ${{steps.extract.outputs.branch_name}}
         run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
 
       - name: Cleanup
