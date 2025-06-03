@@ -122,7 +122,7 @@ resource "aws_db_parameter_group" "parameter_group" {
 }
 
 resource "aws_db_instance" "rds" {
-  identifier                      = var.name
+  identifier                      = "${var.name_prefix}-${var.name}"
   instance_class                  = var.rds_instance_class
   engine                          = var.rds_engine
   engine_version                  = var.rds_engine_version
