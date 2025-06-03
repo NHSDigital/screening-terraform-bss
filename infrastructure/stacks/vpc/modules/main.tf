@@ -49,14 +49,14 @@ resource "aws_subnet" "private_subnet_a" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = false
   tags = {
-    "Name"                                                = "${var.name_prefix}${var.name}-a"
-    "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
-    "Type"                                                = "private"
-    "kubernetes.io/role/internal-elb"                     = "1",
-    "mapPublicIpOnLaunch"                                 = "FALSE"
-    "karpenter.sh/discovery"                              = "${var.name_prefix}${var.name}"
-    "kubernetes.io/role/cni"                              = "1"
-    "mapPublicIpOnLaunch"                                 = "FALSE"
+    "Name"                                         = "${var.name_prefix}${var.name}-a"
+    "kubernetes.io/cluster/${var.name_prefix}-eks" = "shared"
+    "Type"                                         = "private"
+    "kubernetes.io/role/internal-elb"              = "1",
+    "mapPublicIpOnLaunch"                          = "FALSE"
+    "karpenter.sh/discovery"                       = "${var.name_prefix}${var.name}"
+    "kubernetes.io/role/cni"                       = "1"
+    "mapPublicIpOnLaunch"                          = "FALSE"
   }
 }
 
@@ -66,14 +66,14 @@ resource "aws_subnet" "private_subnet_b" {
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = false
   tags = {
-    "Name"                                                = "${var.name_prefix}${var.name}-b"
-    "kubernetes.io/cluster/${var.name_prefix}${var.name}" = "shared"
-    "Type"                                                = "private"
-    "kubernetes.io/role/internal-elb"                     = "1",
-    "mapPublicIpOnLaunch"                                 = "FALSE"
-    "karpenter.sh/discovery"                              = "${var.name_prefix}${var.name}"
-    "kubernetes.io/role/cni"                              = "1"
-    "mapPublicIpOnLaunch"                                 = "FALSE"
+    "Name"                                         = "${var.name_prefix}${var.name}-b"
+    "kubernetes.io/cluster/${var.name_prefix}-eks" = "shared"
+    "Type"                                         = "private"
+    "kubernetes.io/role/internal-elb"              = "1",
+    "mapPublicIpOnLaunch"                          = "FALSE"
+    "karpenter.sh/discovery"                       = "${var.name_prefix}${var.name}"
+    "kubernetes.io/role/cni"                       = "1"
+    "mapPublicIpOnLaunch"                          = "FALSE"
   }
 }
 
