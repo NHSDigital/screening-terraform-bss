@@ -3,12 +3,6 @@ variable "aws_secret_id" {
   description = "The name of the secret that holds the postgresql login details"
 }
 
-variable "name" {
-  description = "the name of the RDS instance"
-  type        = string
-  default     = ""
-}
-
 variable "environment" {
   description = "the environment the resource is deployed into"
   type        = string
