@@ -4,8 +4,9 @@ variable "aws_secret_id" {
 }
 
 variable "name" {
-  description = "the name of the service"
+  description = "the name of the RDS instance"
   type        = string
+  default     = ""
 }
 
 variable "environment" {
@@ -15,5 +16,10 @@ variable "environment" {
 
 variable "db_name" {
   description = "Name of the branch used to create the database"
+}
+
+variable "name_prefix" {
+  description = "The name prefix which includes environment and region details"
+  type        = string
 }
 

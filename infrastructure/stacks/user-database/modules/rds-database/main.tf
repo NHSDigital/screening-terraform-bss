@@ -16,7 +16,7 @@ locals {
 }
 
 data "aws_db_instance" "rds" {
-  db_instance_identifier = var.name
+  db_instance_identifier = "${var.name_prefix}${var.name}"
 }
 
 locals {
@@ -36,7 +36,7 @@ provider "postgresql" {
 }
 
 resource "postgresql_database" "my_db" {
-  name                   = var.db_name
+  name                   = "${var.name_prefix}-${var.db_name}"
   lc_collate             = "C"
   connection_limit       = -1
   allow_connections      = true
