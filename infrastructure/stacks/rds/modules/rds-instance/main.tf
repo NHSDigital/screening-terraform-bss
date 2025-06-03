@@ -9,7 +9,7 @@ locals {
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = ["${var.environment}-${var.name}"]
+    values = ["${var.name_prefix}${var.vpc_name}"]
   }
 }
 
@@ -143,7 +143,7 @@ resource "aws_db_instance" "rds" {
   maintenance_window              = var.maintenance_window
   backup_window                   = var.backup_window
   backup_retention_period         = var.backup_retention_period
-  final_snapshot_identifier       = "${var.name}-final-${timestamp()}"
+  final_snapshot_identifier       = "final-${random_id.final_name.hex}"
   publicly_accessible             = var.publicly_accessible
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot
@@ -212,5 +212,22 @@ resource "aws_security_group_rule" "bss_ingress" {
   security_group_id = aws_security_group.bss.id
   cidr_blocks       = var.ingress_cidr
   description       = "Allow access to rds postgres"
+}
+
+resource "random_string" "final-name" {
+  length           = 16
+  special          = true
+  override_special = "/@£$"
+
+  lifecycle {
+    ignore_changes = [
+      length,
+      special,
+      override_special
+    ]
+  }
+}
+resource "random_id" "final_name" {
+  byte_length = 1
 }
 
