@@ -71,9 +71,7 @@ jobs:
           TF_STACK: ecs-task
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
           TF_VAR_task_name: ${{ github.event.inputs.task_name }}
-        run: |
-          echo "$TF_VAR_task_name"
-          terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
+        run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
 
       - name: Cleanup
         working-directory: infrastructure/stacks/ecs-task
@@ -82,3 +80,40 @@ jobs:
             terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
           fi
 
+      - name: Terraform Init
+        working-directory: infrastructure/stacks/user-database
+        run: terraform init
+
+      - name: Check current workspace
+        working-directory: infrastructure/stacks/user-database
+        run: |
+          if terraform workspace list | grep -qE "^\s*${{steps.extract.outputs.branch_name}}\$"; then
+            echo "Workspace ${{steps.extract.outputs.branch_name}} already exists."
+          else
+            echo "Creating workspace '${{steps.extract.outputs.branch_name}}'..."
+            terraform workspace new "${{steps.extract.outputs.branch_name}}"
+          fi
+          terraform workspace select "${{steps.extract.outputs.branch_name}}"
+          # LIST=$(terraform workspace list)
+          # if terraform workspace list | grep -qE
+          # terraform workspace new ${{ github.event.inputs.task_name }} || true
+          # terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
+
+      - name: Terraform ${{ github.event.inputs.action }}
+        working-directory: infrastructure/stacks/user-database
+        env:
+          TF_ACTION: ${{ github.event.inputs.action }}
+          TF_STACK: ecs-task
+          TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
+          TF_VAR_task_name: ${{ github.event.inputs.task_name }}
+        run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
+
+      - name: Install postgresql client
+        run: apt update && apt install -y postgresql-client
+
+      - name: Cleanup
+        working-directory: infrastructure/stacks/user-database
+        run: |
+          if ["${{ github.event.inputs.action }}" == "destroy"];then
+            terraform workspace delete -force ${{ steps.extract.outputs.branch_name}}
+          fi
