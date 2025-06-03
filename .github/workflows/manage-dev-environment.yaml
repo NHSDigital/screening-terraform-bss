@@ -98,9 +98,6 @@ jobs:
           TF_VAR_db_name: ${{ steps.extract.outputs.branch_name}}
         run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
 
-      - name: Install postgresql client
-        run: apt update && apt install -y postgresql-client
-
       - name: Cleanup
         working-directory: infrastructure/stacks/user-database
         run: |
