@@ -1,10 +1,11 @@
 
 variable "secret_data" {
   description = "combined secret string"
+  sensitive   = true
 }
 variable "firehose_splunk_url" {
   description = "URL for splunk"
-  default = "https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector"
+  default     = "https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector"
 }
 
 variable "name_prefix" {
