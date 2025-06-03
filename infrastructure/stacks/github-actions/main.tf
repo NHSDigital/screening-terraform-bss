@@ -81,7 +81,6 @@ resource "aws_iam_policy" "github_actions_ec2" {
           "ec2:DeleteSecurityGroup",
           "ec2:*",
           "vpc:*",
-          "rds:*",
           "eks:*",
           "elasticache:*",
           "ecr:CreateRepository",
@@ -155,26 +154,33 @@ resource "aws_iam_role_policy_attachment" "github_actions_ecs_iam" {
   policy_arn = aws_iam_policy.github_actions_ecs_iam.arn
 }
 
-# resource "aws_iam_policy" "github_actions_rds" {
-#   name        = "github-actions-rds"
-#   description = "Policy for GitHub Actions"
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Action = [
-#           "rds:*",
-#         ]
-#         Resource = "*"
-#       }
-#     ]
-#   })
-# }
-# resource "aws_iam_role_policy_attachment" "github_actions_rds" {
-#   role       = aws_iam_role.github_actions.name
-#   policy_arn = aws_iam_policy.github_actions_rds.arn
-# }
+resource "aws_iam_policy" "github_actions_rds" {
+  name        = "github-actions-rds"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "rds:*",
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "iam:CreatePolicy"
+        ]
+        Resource = ["arn:aws:iam::${var.aws_account_id}:policy/rds-enhanced-monitoring-policy"]
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_rds" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_rds.arn
+}
 
 # resource "aws_iam_policy" "github_actions_eks" {
 #   name        = "github-actions-eks"
