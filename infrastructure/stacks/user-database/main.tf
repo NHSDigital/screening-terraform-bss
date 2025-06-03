@@ -20,6 +20,7 @@ provider "aws" {
     tags = {
       Environment = var.environment
       Terraform   = "True"
+      Stack       = "USER-DATABASE"
     }
   }
 }
@@ -30,6 +31,5 @@ module "database" {
   environment   = var.environment
   aws_secret_id = var.aws_secret_id
   db_name       = var.db_name
-  git_branch    = var.git_branch
 }
 
