@@ -31,5 +31,6 @@ module "database" {
   environment   = var.environment
   aws_secret_id = var.aws_secret_id
   db_name       = var.db_name
+  name_prefix   = var.name_prefix
 }
 
