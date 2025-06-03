@@ -1,11 +1,6 @@
 resource "aws_iam_policy" "cw_firehose_iam_policy" {
   name   = "${var.name_prefix}_cw_firehose"
   policy = data.aws_iam_policy_document.cw_firehose_doc_policy.json
-
-  tags = {
-    # using texas tag for all as refactor would be needed to use a valid service team tag
-    Service = "texas"
-  }
 }
 
 data "aws_iam_policy_document" "cw_firehose_doc_policy" {
@@ -69,11 +64,6 @@ data "aws_iam_policy_document" "cw_firehose_assume_role" {
 resource "aws_iam_role" "cw_firehose_iam_role" {
   name               = "${var.name_prefix}_cw_firehose_access_role"
   assume_role_policy = data.aws_iam_policy_document.cw_firehose_assume_role.json
-
-  tags = {
-    # using texas tag for all as refactor would be needed to use a valid service team tag
-    Service = "texas"
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "cw_firehose_att" {

@@ -14,11 +14,6 @@ resource "aws_iam_policy" "cloudwatch_to_firehose" {
       }
     ]
   })
-
-  tags = {
-    # using texas tag for all as refactor would be needed to use a valid service team tag
-    Service = "texas"
-  }
 }
 
 resource "aws_iam_role" "cloudwatch_to_firehose_role" {
