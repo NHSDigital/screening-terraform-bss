@@ -4,6 +4,8 @@ variable "environment" {
 
 variable "name" {
   description = "The name of the resource"
+  type        = string
+  default     = "postgres"
 }
 
 variable "aws_secret_id" {
