@@ -33,7 +33,7 @@ private static final Logger LOG = LoggerFactory.getLogger(MhsController.class);
 public void process(HttpServletRequest request, HttpServletResponse response) throws IOException {
 try {
 LOG.info("Recieved request");
-response.getWriter().write("Hello World");
+response.getWriter().write("Hello Toms World");
 response.getWriter().flush();
 } catch (Exception e) {
 LOG.error("Request unprocessable by MHSEndpoint", e);
