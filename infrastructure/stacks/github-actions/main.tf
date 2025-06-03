@@ -170,7 +170,8 @@ resource "aws_iam_policy" "github_actions_rds" {
       {
         Effect = "Allow"
         Action = [
-          "iam:CreatePolicy"
+          "iam:CreatePolicy",
+          "iam:TagPolicy"
         ]
         Resource = ["arn:aws:iam::${var.aws_account_id}:policy/rds-enhanced-monitoring-policy"]
       }
