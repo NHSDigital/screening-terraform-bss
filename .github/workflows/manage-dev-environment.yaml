@@ -59,18 +59,13 @@ jobs:
             terraform workspace new "${{steps.extract.outputs.branch_name}}"
           fi
           terraform workspace select "${{steps.extract.outputs.branch_name}}"
-          # LIST=$(terraform workspace list)
-          # if terraform workspace list | grep -qE
-          # terraform workspace new ${{ github.event.inputs.task_name }} || true
-          # terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/ecs-task
         env:
           TF_ACTION: ${{ github.event.inputs.action }}
-          TF_STACK: ecs-task
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
-          TF_VAR_task_name: ${{ github.event.inputs.task_name }}
+          TF_VAR_task_name: ${{steps.extract.outputs.branch_name}}
         run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
 
       - name: Cleanup
@@ -94,22 +89,14 @@ jobs:
             terraform workspace new "${{steps.extract.outputs.branch_name}}"
           fi
           terraform workspace select "${{steps.extract.outputs.branch_name}}"
-          # LIST=$(terraform workspace list)
-          # if terraform workspace list | grep -qE
-          # terraform workspace new ${{ github.event.inputs.task_name }} || true
-          # terraform workspace list && terraform workspace select ${{ github.event.inputs.task_name }}
 
       - name: Terraform ${{ github.event.inputs.action }}
         working-directory: infrastructure/stacks/user-database
         env:
           TF_ACTION: ${{ github.event.inputs.action }}
-          TF_STACK: ecs-task
           TF_VAR_aws_account_id: ${{ secrets.DEV_AWS_ACCOUNT_ID }}
-          TF_VAR_task_name: ${{ github.event.inputs.task_name }}
+          TF_VAR_db_name: ${{ steps.extract.outputs.branch_name}}
         run: terraform ${{ github.event.inputs.action }} -auto-approve -var-file="../../environments/cicd/main.tfvars"
-
-      - name: Install postgresql client
-        run: apt update && apt install -y postgresql-client
 
       - name: Cleanup
         working-directory: infrastructure/stacks/user-database

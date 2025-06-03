@@ -3,9 +3,10 @@ variable "aws_secret_id" {
   description = "The name of the secret that holds the postgresql login details"
 }
 
-variable "name" {
+variable "rds_name" {
   description = "the name of the service"
   type        = string
+  default     = "postgres"
 }
 
 variable "environment" {
@@ -15,5 +16,10 @@ variable "environment" {
 
 variable "db_name" {
   description = "the name for the users database"
+  type        = string
+}
+
+variable "name_prefix" {
+  description = "The name prefix which includes environment and region details"
   type        = string
 }
