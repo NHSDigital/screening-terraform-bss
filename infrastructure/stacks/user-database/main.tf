@@ -30,5 +30,6 @@ module "database" {
   environment   = var.environment
   aws_secret_id = var.aws_secret_id
   db_name       = var.db_name
+  git_branch    = var.git_branch
 }
 

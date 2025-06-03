@@ -14,6 +14,6 @@ variable "environment" {
 }
 
 variable "db_name" {
-
+  description = "Name of the branch used to create the database"
 }
 
