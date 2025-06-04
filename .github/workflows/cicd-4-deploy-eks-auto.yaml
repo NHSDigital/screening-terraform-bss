@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "feature/2260"
+      - "feature/2260-new"
   # workflow_dispatch:
 
 permissions:
@@ -40,8 +41,6 @@ jobs:
       run: |
         helm repo add lwolf-charts http://charts.lwolf.org
         helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
-
-
 
     - name: extract name from branch
       id: extract
