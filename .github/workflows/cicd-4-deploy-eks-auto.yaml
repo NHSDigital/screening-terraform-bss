@@ -30,6 +30,19 @@ jobs:
         role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
         aws-region: ${{ env.AWS_REGION }}
 
+    - name: Install Helm
+      run: |
+        wget https://get.helm.sh/helm-v3.18.2-linux-amd64.tar.gz
+        tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
+        mv linux-amd64/helm /usr/local/bin/
+
+    - name: Run Helm
+      run: |
+        helm repo add lwolf-charts http://charts.lwolf.org
+        helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
+
+
+
     - name: extract name from branch
       id: extract
       run: |
