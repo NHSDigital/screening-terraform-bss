@@ -1,7 +1,10 @@
 name: Deploy to EKS Auto Mode
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - "feature/2260"
+  # workflow_dispatch:
 
 env:
   CLUSTER_NAME: nhse-bss-euwest2-cicd-eks
