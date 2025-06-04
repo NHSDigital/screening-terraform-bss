@@ -114,8 +114,7 @@ resource "aws_eks_cluster" "cluster" {
   version  = "1.32"
 
   vpc_config {
-    # subnet_ids              = module.vpc_eks.private_subnets
-    subnet_ids              = data.aws_subnets.private_subnets.ids
+    subnet_ids              = data.aws_subnets.public_subnets.ids
     security_group_ids      = []
     endpoint_private_access = "true"
     endpoint_public_access  = "true"
@@ -242,3 +241,13 @@ resource "aws_eks_access_policy_association" "user_namespace" {
   }
 }
 
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "coredns"
+}
+
+resource "aws_eks_addon" "metrics" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "metrics-server"
+}
