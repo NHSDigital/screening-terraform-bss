@@ -6,6 +6,10 @@ on:
       - "feature/2260"
   # workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   CLUSTER_NAME: nhse-bss-euwest2-cicd-eks
   AWS_REGION: eu-west-2
