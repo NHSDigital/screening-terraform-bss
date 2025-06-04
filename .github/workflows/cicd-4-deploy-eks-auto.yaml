@@ -53,4 +53,5 @@ jobs:
         IMAGE_URI=${ECR_REPO}:${IMAGE_TAG}
         echo "Using container suffix: $SUFFIX"
         sed -e "s|<image-uri>|$IMAGE_URI|g" \
+            -e "s|<branch-name>|$SUFFIX|g" namespace.yaml | kubectl apply -f - \
             -e "s|<branch-name>|$SUFFIX|g" deployment.yaml | kubectl apply -f -
