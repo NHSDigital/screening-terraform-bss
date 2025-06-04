@@ -206,13 +206,20 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOn
   role       = aws_iam_role.node.name
 }
 
+
 resource "aws_eks_access_entry" "admin" {
   cluster_name  = local.cluster_name
-  principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
+  principal_arn = [
+    "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5",
+    "arn:aws:iam::${var.aws_account_id}:role/github-actions-role" 
+    ]
 }
 resource "aws_eks_access_policy_association" "admin" {
   cluster_name  = local.cluster_name
-  principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
+  principal_arn = [
+    "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5",
+    "arn:aws:iam::${var.aws_account_id}:role/github-actions-role" 
+    ]
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   access_scope {
     type = "cluster"
