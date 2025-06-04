@@ -114,7 +114,7 @@ resource "aws_eks_cluster" "cluster" {
   version  = "1.32"
 
   vpc_config {
-    subnet_ids              = data.aws_subnets.private_subnets.ids
+    subnet_ids              = data.aws_subnets.public_subnets.ids
     security_group_ids      = []
     endpoint_private_access = "true"
     endpoint_public_access  = "true"
