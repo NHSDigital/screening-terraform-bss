@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-eks-app-<branch-name>
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-eks-app-<branch-name>
+  template:
+    metadata:
+      labels:
+        app: node-eks-app-<branch-name>
+    spec:
+      containers:
+      - name: node-eks-app-<branch-name>
+        image: <image-uri>
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-eks-service-<branch-name>
+spec:
+  type: LoadBalancer
+  selector:
+    app: node-eks-app-<branch-name>
+  ports:
+    - port: 80
+      targetPort: 80
