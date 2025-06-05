@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: node-eks-namespace-<branch-name>
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-eks-app-<branch-name>
+  namespace: node-eks-namespace-<branch-name>
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: node-eks-app-<branch-name>
+  template:
+    metadata:
+      labels:
+        app: node-eks-app-<branch-name>
+    spec:
+      containers:
+      - name: node-eks-app-<branch-name>
+        image: <image-uri>
+        ports:
+        - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-eks-service-<branch-name>
+  namespace: node-eks-namespace-<branch-name>
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+spec:
+  type: LoadBalancer
+  selector:
+    app: node-eks-app-<branch-name>
+  ports:
+    - port: 80
+      targetPort: 80
