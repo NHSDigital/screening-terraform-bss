@@ -74,10 +74,6 @@ resource "aws_lambda_function" "preprocess-cw-logs" {
   source_code_hash = data.archive_file.preprocess-cw-logs-zip.output_base64sha256
   runtime          = "python3.12"
   timeout          = "180"
-  tags = {
-    # using texas tag for all as refactor would be needed to use a valid service team tag
-    Service = "texas"
-  }
 }
 
 ############
