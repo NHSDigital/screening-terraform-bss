@@ -49,23 +49,23 @@ quotas at https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.htm
 
 The code below will:
 
-1) Gunzip the data
-2) Parse the json
-3) Set the result to ProcessingFailed for any record whose messageType is not DATA_MESSAGE, thus redirecting them to the
-   processing error output. Such records do not contain any log events. You can modify the code to set the result to
-   Dropped instead to get rid of these records completely.
-4) For records whose messageType is DATA_MESSAGE, extract the individual log events from the logEvents field, and pass
-   each one to the transformLogEvent method. You can modify the transformLogEvent method to perform custom
-   transformations on the log events.
-5) Concatenate the result from (4) together and set the result as the data of the record returned to Firehose. Note that
-   this step will not add any delimiters. Delimiters should be appended by the logic within the transformLogEvent
-   method.
-6) Any individual record exceeding 6,000,000 bytes in size after decompression and encoding is marked as
-   ProcessingFailed within the function. The original compressed record will be backed up to the S3 bucket
-   configured on the Firehose.
-7) Any additional records which exceed 6MB will be re-ingested back into Firehose.
-8) The retry count for intermittent failures during re-ingestion is set 20 attempts. If you wish to retry fewer number
-   of times for intermittent failures you can lower this value.
+1)  Gunzip the data
+2)  Parse the json
+3)  Set the result to ProcessingFailed for any record whose messageType is not DATA_MESSAGE, thus redirecting them to the
+    processing error output. Such records do not contain any log events. You can modify the code to set the result to
+    Dropped instead to get rid of these records completely.
+4)  For records whose messageType is DATA_MESSAGE, extract the individual log events from the logEvents field, and pass
+    each one to the transformLogEvent method. You can modify the transformLogEvent method to perform custom
+    transformations on the log events.
+5)  Concatenate the result from (4) together and set the result as the data of the record returned to Firehose. Note that
+    this step will not add any delimiters. Delimiters should be appended by the logic within the transformLogEvent
+    method.
+6)  Any individual record exceeding 6,000,000 bytes in size after decompression and encoding is marked as
+    ProcessingFailed within the function. The original compressed record will be backed up to the S3 bucket
+    configured on the Firehose.
+7)  Any additional records which exceed 6MB will be re-ingested back into Firehose.
+8)  The retry count for intermittent failures during re-ingestion is set 20 attempts. If you wish to retry fewer number
+    of times for intermittent failures you can lower this value.
 """
 
 import base64
@@ -94,14 +94,13 @@ def transformLogEvent(log_event, logGroup, logStream):
             if logStream:
                 logStream = 'cwstreamname:' + logStream + ' '
             response =  logGroup + logStream + log_event['message'] + '\n'
-    else: 
+    else:
         if logGroup:
             logGroup = 'cwlogname:' + logGroup +' '
         if logStream:
             logStream = 'cwstreamname:' + logStream + ' '
         response =  logGroup + logStream + log_event['message'] + '\n'
-    return response 
-    
+    return response
 
 def processRecords(records):
     for r in records:
