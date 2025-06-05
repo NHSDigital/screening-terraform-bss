@@ -39,8 +39,8 @@ data "aws_eks_cluster_auth" "eks" {
 
 resource "kubernetes_manifest" "alb_ingress_class_params" {
   manifest = {
-    "apiVersion" = "eks.amazonaws.com/v1"
-    "kind"       = "ingressClassParams"
+    "apiVersion" = "elbv2.k8s.aws/v1"
+    "kind"       = "IngressClassParams"
     "metadata" = {
       "name" = "alb"
     }
