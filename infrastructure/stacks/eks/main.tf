@@ -111,7 +111,7 @@ data "aws_subnet" "public_subnets" {
 resource "aws_eks_cluster" "cluster" {
   name     = local.cluster_name
   role_arn = aws_iam_role.cluster.arn
-  version  = "1.32"
+  version  = "1.33"
 
   vpc_config {
     subnet_ids              = data.aws_subnets.public_subnets.ids
