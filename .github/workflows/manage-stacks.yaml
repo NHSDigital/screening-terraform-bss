@@ -44,6 +44,11 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
+      - name: print variables
+        run: |
+          echo "action = ${{ github.event.inputs.action }}"
+          echo "stack = ${{ github.event.inputs.stack }}"
+          echo "environment = ${{ github.event.inputs.environment }}"
       - name: Checkout code
         uses: actions/checkout@v4
 
