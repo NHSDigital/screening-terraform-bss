@@ -260,7 +260,7 @@ resource "aws_eks_addon" "externaldns" {
     service_account = "external-dns"
   }
   configuration_values = jsonencode(
-    {"policy": "sync"}
+    { "policy" : "sync" }
   )
 }
 
