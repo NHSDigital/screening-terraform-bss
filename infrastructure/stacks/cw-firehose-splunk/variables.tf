@@ -1,9 +1,14 @@
 
-variable "secret_data" {
-  # TODO - pull in the Splunk HEC token from secrets manager instead of manual input
-  description = "combined secret string (Splunk HEC token followed by ~ followed by true or false for exclude_extra_logging value)"
-  sensitive   = true
+variable "exclude_extra_logging" {
+  default = false
+  description = "Include extra logging information in the Lambda function that preprocesses the CW logs before sending to Splunk"
 }
+
+variable "splunk_hec_token" {
+  description = "Splunk HEC token which points to a specific log index in Splunk"
+  sensitive = true
+}
+
 variable "firehose_splunk_url" {
   description = "URL for splunk"
   default     = "https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector"

@@ -19,11 +19,6 @@ provider "aws" {
   }
 }
 
-locals {
-  hec_token             = split("~", "${var.secret_data}~")[0]
-  exclude_extra_logging = split("~", "${var.secret_data}~")[1]
-}
-
 ##################
 #  Common config blocks
 ##################
@@ -44,8 +39,7 @@ resource "local_file" "preprocess-cw-logs-py" {
   content = templatefile("${path.module}/templates/preprocess-cw-logs.py.tpl", {
     servicePrefix         = var.name_prefix,
     region                = "eu-west-2",
-    secret_data           = var.secret_data
-    exclude_extra_logging = local.exclude_extra_logging
+    exclude_extra_logging = var.exclude_extra_logging
   })
   filename = "${path.module}/build/${var.name_prefix}.py"
 }
@@ -107,7 +101,7 @@ resource "aws_kinesis_firehose_delivery_stream" "cw_logs_splunk_stream" {
 
   splunk_configuration {
     hec_endpoint               = var.firehose_splunk_url
-    hec_token                  = local.hec_token
+    hec_token                  = var.splunk_hec_token
     hec_acknowledgment_timeout = 600
     hec_endpoint_type          = "Raw"
     s3_backup_mode             = "FailedEventsOnly"
