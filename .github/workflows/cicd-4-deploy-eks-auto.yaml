@@ -46,15 +46,6 @@ jobs:
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-
-
-    - name: Install via Helm
-      uses: deliverybot/helm@v1
-      with:
-        release: nginx
-        namespace: nginx-test
-        chart: app
-        token: ${{ github.token }}
         
     - name: Install Helm
       run: |
