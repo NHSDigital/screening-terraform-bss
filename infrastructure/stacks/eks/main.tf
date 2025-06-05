@@ -232,6 +232,19 @@ resource "aws_eks_access_policy_association" "admin" {
   }
 }
 
+resource "aws_eks_access_entry" "github-action" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.aws_account_id}:role/github-actions-role"
+}
+resource "aws_eks_access_policy_association" "github-action" {
+  cluster_name  = local.cluster_name
+  principal_arn = "arn:aws:iam::${var.aws_account_id}:role/github-actions-role"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  access_scope {
+    type = "cluster"
+  }
+}
+
 resource "aws_eks_access_entry" "user" {
   cluster_name  = local.cluster_name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
@@ -264,3 +277,67 @@ resource "aws_eks_addon" "metrics" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "metrics-server"
 }
+
+resource "aws_eks_addon" "externaldns" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "external-dns"
+  pod_identity_association {
+    role_arn        = aws_iam_role.external-dns.arn
+    service_account = "external-dns"
+  }
+  configuration_values = jsonencode(
+    { "policy" : "sync" }
+  )
+}
+
+resource "aws_iam_role" "external-dns" {
+  name               = "external-dns-role"
+  description        = "Role for external-dns addon"
+  assume_role_policy = data.aws_iam_policy_document.external_dns_role_policy.json
+}
+
+resource "aws_iam_policy" "externaldns_iam" {
+  name        = "${var.name_prefix}${var.name}-externaldns-iam"
+  description = "Policy ${var.name_prefix}${var.name}-externaldns"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ChangeResourceRecordSets"
+        ],
+        "Resource" : [
+          "arn:aws:route53:::hostedzone/*"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets",
+          "route53:ListTagsForResources"
+        ],
+        "Resource" : [
+          "*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "externaldns_iam" {
+  role       = aws_iam_role.external-dns.name
+  policy_arn = aws_iam_policy.externaldns_iam.arn
+}
+
+data "aws_iam_policy_document" "external_dns_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
+}
+

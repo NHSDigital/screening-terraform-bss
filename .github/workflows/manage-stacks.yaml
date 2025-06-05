@@ -17,6 +17,7 @@ on:
         options:
           - vpc
           - eks
+          - eks-resources
           - rds
           - elasticache
           - ecs-cluster
@@ -36,10 +37,19 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  CLUSTER_NAME: nhse-bss-euwest2-cicd-eks
+  AWS_REGION: eu-west-2
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
+      - name: print variables
+        run: |
+          echo "action = ${{ github.event.inputs.action }}"
+          echo "stack = ${{ github.event.inputs.stack }}"
+          echo "environment = ${{ github.event.inputs.environment }}"
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -53,6 +63,10 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
           aws-region: eu-west-2
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
       - name: Terraform Init
         working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
