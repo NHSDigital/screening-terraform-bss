@@ -66,4 +66,3 @@ jobs:
         echo "Using container suffix: $SUFFIX"
         sed -e "s|<image-uri>|$IMAGE_URI|g" \
             -e "s|<branch-name>|$SUFFIX|g" deployment.yaml | kubectl apply -f -
-
