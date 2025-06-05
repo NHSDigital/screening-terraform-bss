@@ -256,3 +256,34 @@ resource "aws_eks_addon" "externaldns" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "external-dns"
 }
+
+resource "aws_iam_role" "external-dns" {
+  name        = "external-dns-role"
+  description = "Role for external-dns addon"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ChangeResourceRecordSets"
+        ],
+        "Resource" : [
+          "arn:aws:route53:::hostedzone/*"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets",
+          "route53:ListTagsForResources"
+        ],
+        "Resource" : [
+          "*"
+        ]
+      }
+    ]
+  })
+}
