@@ -256,14 +256,14 @@ resource "aws_eks_addon" "externaldns" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "external-dns"
   pod_identity_association {
-    role_arn = aws_iam_role.external-dns.arn
+    role_arn        = aws_iam_role.external-dns.arn
     service_account = "external-dns"
   }
 }
 
 resource "aws_iam_role" "external-dns" {
-  name        = "external-dns-role"
-  description = "Role for external-dns addon"
+  name               = "external-dns-role"
+  description        = "Role for external-dns addon"
   assume_role_policy = data.aws_iam_policy_document.external_dns_role_policy.json
 }
 
@@ -289,10 +289,10 @@ resource "aws_iam_policy" "externaldns_iam" {
           "route53:ListResourceRecordSets",
           "route53:ListTagsForResources"
         ],
-         "Resource" : [
-           "*"
+        "Resource" : [
+          "*"
         ]
-       }
+      }
     ]
   })
 }
@@ -308,6 +308,35 @@ data "aws_iam_policy_document" "external_dns_role_policy" {
     principals {
       type        = "Service"
       identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "kubernetes_manifest" "alb_ingress_class_params" {
+  manifest = {
+    "apiVersion" = "eks.amazonaws.com/v1"
+    "kind"       = "ingressClassParams"
+    "metadata" = {
+      "name" = "alb"
+    }
+    "spec" = {
+      "scheme" = "internet-facing"
+    }
+  }
+}
+
+resource "kubernetes_ingress_class" "ingress" {
+  metadata {
+    name        = "alb"
+    annotations = "ingressclass.kubernetes.io/is-default-class: 'true'"
+  }
+
+  spec {
+    controller = "eks.amazonaws.com/alb"
+    parameters {
+      api_group = "eks.amazonaws.com"
+      kind      = "IngressClassParams"
+      name      = "alb"
     }
   }
 }
