@@ -251,3 +251,8 @@ resource "aws_eks_addon" "metrics" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "metrics-server"
 }
+
+resource "aws_eks_addon" "externaldns" {
+  cluster_name = aws_eks_cluster.cluster.name
+  addon_name   = "external-dns"
+}
