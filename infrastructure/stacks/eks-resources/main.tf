@@ -37,17 +37,20 @@ data "aws_eks_cluster_auth" "eks" {
   name = local.cluster_name
 }
 
+locals {
+  ingress_class_param = yamldecode(<<EOF
+apiVersion: eks.amazonaws.com/v1
+kind: IngressClassParams
+metadata:
+  name: alb
+spec:
+  scheme: internet-facing
+EOF
+  )
+}
+
 resource "kubernetes_manifest" "alb_ingress_class_params" {
-  manifest = {
-    "apiVersion" = "elbv2.k8s.aws/v1"
-    "kind"       = "IngressClassParams"
-    "metadata" = {
-      "name" = "alb"
-    }
-    "spec" = {
-      "scheme" = "internet-facing"
-    }
-  }
+  manifest = local.ingress_class_param
 }
 
 resource "kubernetes_ingress_class" "ingress" {
