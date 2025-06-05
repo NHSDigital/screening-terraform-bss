@@ -39,6 +39,7 @@ permissions:
 
 env:
   CLUSTER_NAME: nhse-bss-euwest2-cicd-eks
+  AWS_REGION: eu-west-2
 
 jobs:
   terraform:
