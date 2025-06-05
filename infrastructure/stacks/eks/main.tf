@@ -312,33 +312,3 @@ data "aws_iam_policy_document" "external_dns_role_policy" {
   }
 }
 
-resource "kubernetes_manifest" "alb_ingress_class_params" {
-  manifest = {
-    "apiVersion" = "eks.amazonaws.com/v1"
-    "kind"       = "ingressClassParams"
-    "metadata" = {
-      "name" = "alb"
-    }
-    "spec" = {
-      "scheme" = "internet-facing"
-    }
-  }
-}
-
-resource "kubernetes_ingress_class" "ingress" {
-  metadata {
-    name = "alb"
-    annotations = {
-      "ingressclass.kubernetes.io/is-default-class" = "true"
-    }
-  }
-
-  spec {
-    controller = "eks.amazonaws.com/alb"
-    parameters {
-      api_group = "eks.amazonaws.com"
-      kind      = "IngressClassParams"
-      name      = "alb"
-    }
-  }
-}
