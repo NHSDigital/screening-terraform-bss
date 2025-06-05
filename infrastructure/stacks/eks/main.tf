@@ -287,16 +287,17 @@ resource "aws_iam_role" "external-dns" {
         "Resource" : [
           "*"
         ]
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "sts:AssumeRole", "sts:TagSession"
-        ],
-        "Principal" : {
-          "Service" : "pods.eks.amazonaws.com"
-        }
       }
     ]
   })
+}
+
+data "aws_iam_policy_document" "external_dns_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole", "sts:TagSession"]
+    principals {
+      type        = "Service"
+      identifiers = ["pods.eks.amazonaws.com"]
+    }
+  }
 }
