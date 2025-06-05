@@ -327,8 +327,10 @@ resource "kubernetes_manifest" "alb_ingress_class_params" {
 
 resource "kubernetes_ingress_class" "ingress" {
   metadata {
-    name        = "alb"
-    annotations = "ingressclass.kubernetes.io/is-default-class: 'true'"
+    name = "alb"
+    annotations = {
+      "ingressclass.kubernetes.io/is-default-class" = "true"
+    }
   }
 
   spec {
