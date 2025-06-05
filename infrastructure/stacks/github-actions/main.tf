@@ -386,6 +386,6 @@ resource "aws_iam_policy" "github_actions_eks_auto" {
 }
 resource "aws_iam_role_policy_attachment" "github_actions_eks_auto" {
   role       = aws_iam_role.github_actions.name
-  policy_arn = aws_iam_policy.github_actions_eks_auto.arn
+  policy_arn = aws_iam_policy.github_acgtions_eks_auto.arn
 }
 
