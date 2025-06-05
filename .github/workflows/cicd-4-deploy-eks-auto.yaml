@@ -46,7 +46,7 @@ jobs:
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-        
+
     - name: Install Helm
       run: |
         wget https://get.helm.sh/helm-v3.18.2-linux-amd64.tar.gz
