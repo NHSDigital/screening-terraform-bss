@@ -265,32 +265,41 @@ resource "aws_iam_role" "external-dns" {
   name        = "external-dns-role"
   description = "Role for external-dns addon"
   assume_role_policy = data.aws_iam_policy_document.external_dns_role_policy.json
+}
 
-  # assume_role_policy = jsonencode({
-  #   Version = "2012-10-17"
-  #   "Statement" : [
-  #     {
-  #       "Effect" : "Allow",
-  #       "Action" : [
-  #         "route53:ChangeResourceRecordSets"
-  #       ],
-  #       "Resource" : [
-  #         "arn:aws:route53:::hostedzone/*"
-  #       ]
-  #     },
-  #     {
-  #       "Effect" : "Allow",
-  #       "Action" : [
-  #         "route53:ListHostedZones",
-  #         "route53:ListResourceRecordSets",
-  #         "route53:ListTagsForResources"
-  #       ],
-  #       "Resource" : [
-  #         "*"
-  #       ]
-  #     }
-  #   ]
-  # })
+resource "aws_iam_policy" "externaldns_iam" {
+  name        = "${var.name_prefix}${var.name}-externaldns-iam"
+  description = "Policy ${var.name_prefix}${var.name}-externaldns"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ChangeResourceRecordSets"
+        ],
+        "Resource" : [
+          "arn:aws:route53:::hostedzone/*"
+        ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "route53:ListHostedZones",
+          "route53:ListResourceRecordSets",
+          "route53:ListTagsForResources"
+        ],
+         "Resource" : [
+           "*"
+        ]
+       }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "externaldns_iam" {
+  role       = aws_iam_role.external-dns.name
+  policy_arn = aws_iam_policy.externaldns_iam.arn
 }
 
 data "aws_iam_policy_document" "external_dns_role_policy" {
