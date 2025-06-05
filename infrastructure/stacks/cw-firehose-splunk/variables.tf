@@ -1,6 +1,7 @@
 
 variable "secret_data" {
-  description = "combined secret string"
+  # TODO - pull in the Splunk HEC token from secrets manager instead of manual input
+  description = "combined secret string (Splunk HEC token followed by ~ followed by true or false for exclude_extra_logging value)"
   sensitive   = true
 }
 variable "firehose_splunk_url" {
