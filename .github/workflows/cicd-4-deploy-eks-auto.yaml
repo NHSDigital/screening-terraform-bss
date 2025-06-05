@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - "feature/2260"
-      - "feature/2260-new"
   # workflow_dispatch:
 
 permissions:
@@ -53,17 +52,17 @@ jobs:
         tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
         mv linux-amd64/helm /usr/local/bin/d
 
-    - name: Run Helm
-      run: |
-        helm repo add lwolf-charts http://charts.lwolf.org
-        helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
+    # - name: Run Helm
+    #   run: |
+    #     helm repo add lwolf-charts http://charts.lwolf.org
+    #     helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
 
-    - name: Deploy to EKS
-      working-directory: src/sample-app/deploy-yaml
+    - name: Deploy via Helm
       run: |
-        SUFFIX=${{ steps.extract.outputs.branch_name }}
-        IMAGE_URI=${ECR_REPO}:${IMAGE_TAG}
-        echo "Using container suffix: $SUFFIX"
-        sed -e "s|<image-uri>|$IMAGE_URI|g" \
-            -e "s|<branch-name>|$SUFFIX|g" deployment.yaml | kubectl apply -f -
+        BRANCH=${{ steps.extract.outputs.branch_name }}
+        helm upgrade --install node-eks ./src/sample-app/helm \
+          --namespace sample-app-$BRANCH \
+          --set branchName=$BRANCH \
+          --set image.repository=${ECR_REPO} \
+          --set image.tag=${IMAGE_TAG}
 

@@ -1,0 +1,5 @@
+branchName: "default-branch"
+image:
+  repository: "nginx"
+  tag: "latest"
+replicaCount: 2

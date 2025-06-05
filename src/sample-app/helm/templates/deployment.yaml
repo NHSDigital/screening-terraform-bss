@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app-{{ .Values.branchName }}
+  namespace: sample-app-{{ .Values.branchName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: sample-app-{{ .Values.branchName }}
+  template:
+    metadata:
+      labels:
+        app: sample-app-{{ .Values.branchName }}
+    spec:
+  containers:
+  - name: sample-app-{{ .Values.branchName }}
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    ports:
+    - containerPort: 80
+
