@@ -1,7 +1,7 @@
 
 variable "exclude_extra_logging" {
   default     = false
-  description = "Include extra logging information in the Lambda function that preprocesses the CW logs before sending to Splunk"
+  description = "Exclude extra logging information in the Lambda function that preprocesses the CW logs before sending to Splunk"
 }
 
 variable "splunk_hec_token" {
