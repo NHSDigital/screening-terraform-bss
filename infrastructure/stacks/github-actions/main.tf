@@ -370,16 +370,16 @@ resource "aws_iam_policy" "github_actions_eks_auto" {
   name        = "github-actions-eks-auto"
   description = "Policy for GitHub Actions"
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Sid": "EksAccessEntryDescribe",
-        "Effect": "Allow",
-        "Action": [
+        "Sid" : "EksAccessEntryDescribe",
+        "Effect" : "Allow",
+        "Action" : [
           "eks:DescribeCluster",
           "eks:ListAccessEntries"
         ],
-        "Resource": "arn:aws:eks:eu-west-2:${var.aws_account_id}:cluster/nhse-bss-euwest2-cicd-eks"
+        "Resource" : "arn:aws:eks:eu-west-2:${var.aws_account_id}:cluster/nhse-bss-euwest2-cicd-eks"
       }
     ]
   })
