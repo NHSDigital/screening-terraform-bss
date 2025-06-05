@@ -255,6 +255,10 @@ resource "aws_eks_addon" "metrics" {
 resource "aws_eks_addon" "externaldns" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "external-dns"
+  pod_identity_association {
+    role_arn = aws_iam_role.external-dns.arn
+    service_account = "external-dns"
+  }
 }
 
 resource "aws_iam_role" "external-dns" {
@@ -283,6 +287,15 @@ resource "aws_iam_role" "external-dns" {
         "Resource" : [
           "*"
         ]
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "sts:AssumeRole", "sts:TagSession"
+        ],
+        "Principal" : {
+          "Service" : "pods.eks.amazonaws.com"
+        }
       }
     ]
   })
