@@ -259,6 +259,9 @@ resource "aws_eks_addon" "externaldns" {
     role_arn        = aws_iam_role.external-dns.arn
     service_account = "external-dns"
   }
+  configuration_values = jsonencode(
+    {"policy": "sync"}
+  )
 }
 
 resource "aws_iam_role" "external-dns" {
