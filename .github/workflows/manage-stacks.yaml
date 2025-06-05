@@ -17,6 +17,7 @@ on:
         options:
           - vpc
           - eks
+          - eks-resources
           - rds
           - elasticache
           - ecs-cluster
