@@ -103,9 +103,9 @@ resource "aws_cloudwatch_log_group" "sample_app_log_group" {
 
 
 module "cw-logs-to-splunk" {
-  source                    = "../cw-logs-to-splunk"
-  cw_log_group_name         = aws_cloudwatch_log_group.sample_app_log_group.name
-  environment               = var.environment
+  source            = "../cw-logs-to-splunk"
+  cw_log_group_name = aws_cloudwatch_log_group.sample_app_log_group.name
+  environment       = var.environment
 }
 
 
