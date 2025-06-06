@@ -56,7 +56,7 @@ jobs:
 
     - name: Install Instana Helm
       run: |
-        helm install instana-agent \
+        helm update --install instana-agent \
           --repo https://agents.instana.io/helm \
           --namespace instana-agent \
           --create-namespace \
