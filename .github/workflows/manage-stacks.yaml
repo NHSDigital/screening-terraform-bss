@@ -64,10 +64,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
           aws-region: eu-west-2
 
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-
       - name: Terraform Init
         working-directory: infrastructure/stacks/${{ github.event.inputs.stack }}
         run: terraform init
