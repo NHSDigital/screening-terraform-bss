@@ -149,11 +149,11 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOn
 }
 
 resource "aws_eks_access_entry" "admin" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
 }
 resource "aws_eks_access_policy_association" "admin" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_Admin_443e66bf1656dcb5"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   access_scope {
@@ -162,11 +162,11 @@ resource "aws_eks_access_policy_association" "admin" {
 }
 
 resource "aws_eks_access_entry" "github-action" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/github-actions-role"
 }
 resource "aws_eks_access_policy_association" "github-action" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/github-actions-role"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
   access_scope {
@@ -175,11 +175,11 @@ resource "aws_eks_access_policy_association" "github-action" {
 }
 
 resource "aws_eks_access_entry" "user" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
 }
 resource "aws_eks_access_policy_association" "user_cluster" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
   access_scope {
@@ -187,7 +187,7 @@ resource "aws_eks_access_policy_association" "user_cluster" {
   }
 }
 resource "aws_eks_access_policy_association" "user_namespace" {
-  cluster_name  = local.cluster_name
+  cluster_name  = aws_eks_cluster.cluster.name
   principal_arn = "arn:aws:iam::${var.aws_account_id}:role/aws-reserved/sso.amazonaws.com/eu-west-2/AWSReservedSSO_PowerUser_daddc08250323b7f"
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
   access_scope {
@@ -226,13 +226,13 @@ resource "aws_eks_addon" "externaldns" {
 }
 
 resource "aws_iam_role" "external-dns" {
-  name               = "external-dns-role"
+  name               = "${var.name_prefix}-${var.name}-external-dns"
   description        = "Role for external-dns addon"
   assume_role_policy = data.aws_iam_policy_document.external_dns_role_policy.json
 }
 
 resource "aws_iam_policy" "externaldns_iam" {
-  name        = "${var.name_prefix}${var.name}-externaldns-iam"
+  name        = "${var.name_prefix}${var.name}-external-dns-iam"
   description = "Policy ${var.name_prefix}${var.name}-externaldns"
   policy = jsonencode({
     Version = "2012-10-17"
