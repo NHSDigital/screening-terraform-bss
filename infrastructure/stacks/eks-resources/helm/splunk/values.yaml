@@ -145,8 +145,6 @@ tolerations:
     effect: NoSchedule
     operator: Exists
 
-agent:
-  pod:
-    affinity: {}
-    tolerations: []
-    nodeSelector: {}
+affinity: {}
+tolerations: []
+nodeSelector: {}
