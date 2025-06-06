@@ -64,7 +64,7 @@ jobs:
       run: |
         helm repo add splunk-otel-collector-chart https://signalfx.github.io/splunk-otel-collector-chart
 
-        helm install splunk-otel-collector splunk-otel-collector-chart/splunk-otel-collector \
+        helm upgrade splunk-otel-collector splunk-otel-collector-chart/splunk-otel-collector \
         --version 0.86.0 \
         --namespace splunk \
         -f values.yaml \
