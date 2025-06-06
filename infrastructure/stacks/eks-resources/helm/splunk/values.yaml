@@ -140,13 +140,7 @@ secret:
 
 # # This default tolerations allow the daemonset to be deployed on control-plane
 # # nodes, so that we can also collect logs and metrics from those nodes.
-# tolerations:
-#   - key: node_group_instance
-#     effect: NoSchedule
-#     operator: Exists
-
-
-agentDaemonSet:
-  affinity: {}
-  tolerations: []
-  nodeSelector: {}
+tolerations:
+  - key: node_group_instance
+    effect: NoSchedule
+    operator: Exists
