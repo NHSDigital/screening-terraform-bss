@@ -1,0 +1,69 @@
+name: Deploy to EKS Auto Mode
+
+on:
+  push:
+    branches:
+      - "feature/2260"
+      - "feature/2260-new"
+  # workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  CLUSTER_NAME: nhse-bss-euwest2-cicd-eks
+  AWS_REGION: eu-west-2
+  IMAGE_TAG: latest
+  ECR_REPO: ${{ secrets.DEV_AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/nhse-bss-euwest2-cicd
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::${{ secrets.DEV_AWS_ACCOUNT_ID }}:role/github-actions-role
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: extract name from branch
+      id: extract
+      run: |
+        BRANCH="${GITHUB_REF##*/}" # Get full ref name
+        echo "$BRANCH"
+        BRANCH_NAME="${BRANCH#feature/}" # remove the `feature/` from the begining
+        echo "branch_name"="$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+
+    - name: Check extracted branch suffix
+      run: |
+          echo "branch_name: ${{ steps.extract.outputs.branch_name}}"
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+    - name: Install Helm
+      run: |
+        wget https://get.helm.sh/helm-v3.18.2-linux-amd64.tar.gz
+        tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
+        mv linux-amd64/helm /usr/local/bin/d
+
+    - name: Run Helm
+      run: |
+        helm repo add lwolf-charts http://charts.lwolf.org
+        helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
+
+    - name: Deploy to EKS
+      working-directory: src/sample-app/deploy-yaml
+      run: |
+        SUFFIX=${{ steps.extract.outputs.branch_name }}
+        IMAGE_URI=${ECR_REPO}:${IMAGE_TAG}
+        echo "Using container suffix: $SUFFIX"
+        sed -e "s|<image-uri>|$IMAGE_URI|g" \
+            -e "s|<branch-name>|$SUFFIX|g" deployment.yaml | kubectl apply -f -
+

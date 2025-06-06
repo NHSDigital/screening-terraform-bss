@@ -286,7 +286,8 @@ resource "aws_iam_policy" "github_actions_eks_iam" {
         ]
         Resource = [
           "arn:aws:iam::${var.aws_account_id}:role/nhse-bss-euwest2-cicd-eks-cluster",
-          "arn:aws:iam::${var.aws_account_id}:role/nhse-bss-euwest2-cicd-eks-node"
+          "arn:aws:iam::${var.aws_account_id}:role/nhse-bss-euwest2-cicd-eks-node",
+          "arn:aws:eks:eu-west-2:${var.aws_account_id}:cluster/nhse-bss-euwest2-cicd-eks"
         ]
       }
     ]
@@ -363,5 +364,28 @@ resource "aws_iam_policy" "github_actions_kms" {
 resource "aws_iam_role_policy_attachment" "github_actions_kms" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.github_actions_kms.arn
+}
+
+resource "aws_iam_policy" "github_actions_eks_auto" {
+  name        = "github-actions-eks-auto"
+  description = "Policy for GitHub Actions"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "EksAccessEntryDescribe",
+        "Effect" : "Allow",
+        "Action" : [
+          "eks:DescribeCluster",
+          "eks:ListAccessEntries"
+        ],
+        "Resource" : "arn:aws:eks:eu-west-2:${var.aws_account_id}:cluster/nhse-bss-euwest2-cicd-eks"
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "github_actions_eks_auto" {
+  role       = aws_iam_role.github_actions.name
+  policy_arn = aws_iam_policy.github_actions_eks_auto.arn
 }
 
