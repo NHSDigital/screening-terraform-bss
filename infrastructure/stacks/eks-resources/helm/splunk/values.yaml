@@ -144,3 +144,7 @@ tolerations:
   - key: node_group_instance
     effect: NoSchedule
     operator: Exists
+
+affinity: {}
+
+
