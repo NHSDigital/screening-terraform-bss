@@ -65,7 +65,7 @@ jobs:
         helm repo add splunk-otel-collector-chart https://signalfx.github.io/splunk-otel-collector-chart
 
         helm upgrade --install splunk-otel-collector splunk-otel-collector-chart/splunk-otel-collector \
-        --version 0.86.0 \
+        --version 0.126.0 \
         --namespace splunk \
         -f values.yaml \
         --set clusterReceiver.config.exporters.splunk_hec/platform_logs.index=eks_meta_texas_k8s_dev \
