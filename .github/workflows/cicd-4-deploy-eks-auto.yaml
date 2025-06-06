@@ -54,10 +54,10 @@ jobs:
         tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
         mv linux-amd64/helm /usr/local/bin/d
 
-    - name : Create Splunk namespace and secret
-      run: |
-        kubectl create namespace splunk
-        kubectl create secret generic splunk-hec-token --from-literal=splunk_platform_hec_token=${{ secrets.SPLUNK_HEC_TOKEN }} --namespace splunk
+    # - name : Create Splunk namespace and secret
+    #   run: |
+    #     kubectl create namespace splunk
+    #     kubectl create secret generic splunk-hec-token --from-literal=splunk_platform_hec_token=${{ secrets.SPLUNK_HEC_TOKEN }} --namespace splunk
 
     - name: Install Splunk collector
       working-directory: infrastructure/stacks/eks-resources/helm/splunk
