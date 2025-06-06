@@ -15,7 +15,8 @@ clusterName: "nhse-bss-euwest2-cicd-eks"
 splunkPlatform:
   index: "eks_logs_texas_k8s_dev"
   metricsIndex: "eks_metrics_texas_k8s_dev"
-  endpoint: "https://texas-0001.inputs.splunk.aws.digital.nhs.uk:8088"
+  #endpoint: "https://texas-0001.inputs.splunk.aws.digital.nhs.uk:8088"
+  endpoint: "https://firehose.inputs.splunk.aws.digital.nhs.uk/services/collector"
   insecureSkipVerify: true
   metricsEnabled: true
   fieldNameConvention:
