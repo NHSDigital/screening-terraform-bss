@@ -133,7 +133,7 @@ rbac:
 # Create or use existing secret if name is empty default name is used
 secret:
   create: false
-  name: "splunk-otel-collector"
+  name: "splunk-hec-token"
   # Specifies whether secret provided by user should be validated.
   validateSecret: false
 
