@@ -5,6 +5,7 @@ on:
     branches:
       - "feature/2260"
       - "feature/2260-new"
+      - "feature/maea1-2262"
   # workflow_dispatch:
 
 permissions:
@@ -53,10 +54,21 @@ jobs:
         tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
         mv linux-amd64/helm /usr/local/bin/d
 
-    - name: Run Helm
+    - name : Create Splunk namespace and secret
       run: |
-        helm repo add lwolf-charts http://charts.lwolf.org
-        helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
+        kubectl create namespace splunk
+        kubectl create secret generic splunk-hec-token --from-literal=splunk_platform_hec_token=${{ secrets.SPLUNK_HEC_TOKEN }} --namespace splunk
+
+    - name: Install Splunk collector
+      working-directory: infrastructure/stacks/eks-resources/helm/splunk
+      run: |
+        helm repo add splunk-otel-collector-chart https://signalfx.github.io/splunk-otel-collector-chart
+
+        helm install splunk-otel-collector splunk-otel-collector-chart/splunk-otel-collector \
+        --version 0.86.0 \
+        --namespace splunk \
+        -f values.yaml \
+        --set clusterReceiver.config.exporters.splunk_hec/platform_logs.index=eks_meta_texas_k8s_dev \
 
     - name: Deploy to EKS
       working-directory: src/sample-app/deploy-yaml
