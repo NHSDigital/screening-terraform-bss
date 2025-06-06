@@ -84,8 +84,7 @@ jobs:
 
   eks-resources:
     needs: terraform
-    # if: (github.events.inputs.action == "apply" && github.event.inputs.stack == "eks" )
-    if: github.event.inputs.stack == "eks"
+    if: (github.event.inputs.action == "apply" && github.event.inputs.stack == "eks" )
     runs-on: ubuntu-latest
 
     steps:
