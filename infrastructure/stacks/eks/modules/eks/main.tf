@@ -199,6 +199,12 @@ resource "aws_eks_access_policy_association" "user_namespace" {
 resource "aws_eks_addon" "metrics" {
   cluster_name = aws_eks_cluster.cluster.name
   addon_name   = "metrics-server"
+  depends_on = [
+    aws_eks_access_entry.admin,
+    aws_eks_access_policy_association.admin,
+    aws_eks_access_entry.github-action,
+    aws_eks_access_policy_association.github-action
+  ]
 }
 
 resource "aws_eks_addon" "externaldns" {
@@ -211,6 +217,12 @@ resource "aws_eks_addon" "externaldns" {
   configuration_values = jsonencode(
     { "policy" : "sync" }
   )
+  depends_on = [
+    aws_eks_access_entry.admin,
+    aws_eks_access_policy_association.admin,
+    aws_eks_access_entry.github-action,
+    aws_eks_access_policy_association.github-action
+  ]
 }
 
 resource "aws_iam_role" "external-dns" {
