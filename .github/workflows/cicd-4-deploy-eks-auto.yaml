@@ -65,6 +65,9 @@ jobs:
           --set agent.endpointHost=ingress-red-saas.instana.io \
           --set agent.endpointPort=443 \
           --set cluster.name=${{ env.CLUSTER_NAME }} \
+          --set opentelemetry.enabled=false \
+          --set opentelemetry.grpc.enabled=false \
+          --set opentelemetry.http.enabled=false \
           instana-agent
 
     - name: Deploy to EKS
