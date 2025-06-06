@@ -53,10 +53,18 @@ jobs:
         tar -zxvf helm-v3.18.2-linux-amd64.tar.gz
         mv linux-amd64/helm /usr/local/bin/d
 
-    - name: Run Helm
+    - name: Install Instana Helm
       run: |
-        helm repo add lwolf-charts http://charts.lwolf.org
-        helm upgrade --install kube-cleanup lwolf-charts/kube-cleanup-operator -n kube-cleanup --create-namespace
+        helm install instana-agent \
+          --repo https://agents.instana.io/helm \
+          --namespace instana-agent \
+          --create-namespace \
+          --set agent.key=${{ secrets.INSTANA_AGENT_KEY }} \
+          --set agent.downloadKey=${{ secrets.INSTANA_AGENT_KEY }} \
+          --set agent.endpointHost=ingress-red-saas.instana.io \
+          --set agent.endpointPort=443 \
+          --set cluster.name=${{ env.CLUSTER_NAME }} \
+          instana-agent
 
     - name: Deploy to EKS
       working-directory: src/sample-app/deploy-yaml
